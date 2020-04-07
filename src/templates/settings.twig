@@ -1,0 +1,25 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Spicy Afterpay plugin for Craft CMS 3.x
+ *
+ * Spicy Afterpay Settings.twig
+ *
+ * @author    Spicy Web
+ * @copyright Copyright (c) 2020 Spicy Web
+ * @link      https://github.com/spicywebau
+ * @package   SpicyAfterpay
+ * @since     0.1.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("spicyweb\\spicyafterpay\\assetbundles\\spicyafterpay\\SpicyAfterpayAsset") %}
+
+{{ forms.textField({
+	label: 'Some Field',
+	instructions: 'Enter some setting here.',
+	id: 'someAttribute',
+	name: 'someAttribute',
+	value: settings['someAttribute']}) }}

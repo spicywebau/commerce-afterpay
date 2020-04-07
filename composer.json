@@ -1,0 +1,44 @@
+{
+	"name": "spicyweb/spicy-afterpay",
+	"description": "Afterpay gateway for craft commerce",
+	"type": "craft-plugin",
+	"version": "0.1.0",
+	"keywords": [
+		"craft",
+		"cms",
+		"craftcms",
+		"craft-plugin",
+		"spicy afterpay"
+	],
+	"support": {
+		"docs": "https://github.com/https://github.com/spicywebau/craft-spicy-afterpay/spicy-afterpay/blob/master/README.md",
+		"issues": "https://github.com/https://github.com/spicywebau/craft-spicy-afterpay/spicy-afterpay/issues"
+	},
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Spicy Web",
+			"homepage": "https://github.com/spicywebau"
+		}
+	],
+	"require": {
+		"craftcms/cms": "^3.0.0-RC1"
+	},
+	"autoload": {
+		"psr-4": {
+			"spicyweb\\spicyafterpay\\": "src/"
+		}
+	},
+	"extra": {
+		"name": "Spicy Afterpay",
+		"handle": "spicy-afterpay",
+		"developer": "Spicy Web",
+		"developerUrl": "https://github.com/spicywebau",
+		"documentationUrl": "https://github.com/https://github.com/spicywebau/craft-spicy-afterpay/spicy-afterpay/blob/master/README.md",
+		"changelogUrl": "https://raw.githubusercontent.com/https://github.com/spicywebau/craft-spicy-afterpay/spicy-afterpay/master/CHANGELOG.md",
+		"components": {
+			"spicyAfterpayService": "spicyweb\\spicyafterpay\\services\\SpicyAfterpayService"
+		},
+		"class": "spicyweb\\spicyafterpay\\SpicyAfterpay"
+	}
+}
