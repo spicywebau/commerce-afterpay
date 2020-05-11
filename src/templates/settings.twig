@@ -13,13 +13,28 @@
  */
 #}
 
-{% import "_includes/forms" as forms %}
+{% from "_includes/forms" import textField, lightswitchField, selectField, autosuggestField %}
 
-{% do view.registerAssetBundle("spicyweb\\spicyafterpay\\assetbundles\\spicyafterpay\\SpicyAfterpayAsset") %}
+{{ autosuggestField({
+	label: 'Merchant ID'|t('commerce'),
+	id: 'merchantId',
+	class: 'ltr',
+	name: 'merchantId',
+	suggestEnvVars: true,
+	value: gateway.merchantId,
+}) }}
 
-{{ forms.textField({
-	label: 'Some Field',
-	instructions: 'Enter some setting here.',
-	id: 'someAttribute',
-	name: 'someAttribute',
-	value: settings['someAttribute']}) }}
+{{ autosuggestField({
+	label: 'Merchant Key'|t('commerce'),
+	id: 'merchantKey',
+	class: 'ltr',
+	name: 'merchantKey',
+	suggestEnvVars: true,
+	value: gateway.merchantKey,
+}) }}
+
+{{ lightswitchField({
+	label: 'Sandbox Mode?'|t('commerce'),
+	name: 'sandboxMode',
+	on: gateway.sandboxMode,
+}) }}

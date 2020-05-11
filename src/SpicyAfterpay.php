@@ -10,6 +10,8 @@
 
 namespace spicyweb\spicyafterpay;
 
+use craft\commerce\services\Gateways;
+use craft\events\RegisterComponentTypesEvent;
 use spicyweb\spicyafterpay\services\SpicyAfterpayService as SpicyAfterpayServiceService;
 use spicyweb\spicyafterpay\variables\SpicyAfterpayVariable;
 use spicyweb\spicyafterpay\twigextensions\SpicyAfterpayTwigExtension;
@@ -23,6 +25,7 @@ use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 use craft\events\RegisterUrlRulesEvent;
 
+use spicyweb\spicyafterpay\gateways\Afterpay;
 use yii\base\Event;
 
 /**
@@ -71,14 +74,14 @@ class SpicyAfterpay extends Plugin
      *
      * @var bool
      */
-    public $hasCpSettings = true;
+    public $hasCpSettings = false;
     
     /**
      * Set to `true` if the plugin should have its own section (main nav item) in the control panel.
      *
      * @var bool
      */
-    public $hasCpSection = true;
+    public $hasCpSection = false;
     
     // Public Methods
     // =========================================================================
@@ -100,25 +103,25 @@ class SpicyAfterpay extends Plugin
         self::$plugin = $this;
         
         // Add in our Twig extensions
-        Craft::$app->view->registerTwigExtension(new SpicyAfterpayTwigExtension());
+        // Craft::$app->view->registerTwigExtension(new SpicyAfterpayTwigExtension());
         
         // Register our site routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'spicy-afterpay/default';
-            }
-        );
+        // Event::on(
+        //     UrlManager::class,
+        //     UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+        //     function (RegisterUrlRulesEvent $event) {
+        //         $event->rules['siteActionTrigger1'] = 'spicy-afterpay/default';
+        //     }
+        // );
         
         // Register our CP routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['cpActionTrigger1'] = 'spicy-afterpay/default/do-something';
-            }
-        );
+        // Event::on(
+        //     UrlManager::class,
+        //     UrlManager::EVENT_REGISTER_CP_URL_RULES,
+        //     function (RegisterUrlRulesEvent $event) {
+        //         $event->rules['cpActionTrigger1'] = 'spicy-afterpay/default/do-something';
+        //     }
+        // );
         
         // Register our variables
         Event::on(
@@ -132,15 +135,15 @@ class SpicyAfterpay extends Plugin
         );
         
         // Do something after we're installed
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                    // We were just installed
-                }
-            }
-        );
+        // Event::on(
+        //     Plugins::class,
+        //     Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+        //     function (PluginEvent $event) {
+        //         if ($event->plugin === $this) {
+        //             // We were just installed
+        //         }
+        //     }
+        // );
         
         /**
          * Logging in Craft involves using one of the following methods:
@@ -168,6 +171,10 @@ class SpicyAfterpay extends Plugin
             ),
             __METHOD__
         );
+    
+        Event::on(Gateways::class, Gateways::EVENT_REGISTER_GATEWAY_TYPES,  function(RegisterComponentTypesEvent $event) {
+            $event->types[] = Afterpay::class;
+        });
     }
     
     // Protected Methods
@@ -178,10 +185,10 @@ class SpicyAfterpay extends Plugin
      *
      * @return \craft\base\Model|null
      */
-    protected function createSettingsModel()
-    {
-        return new Settings();
-    }
+    // protected function createSettingsModel()
+    // {
+    //     return new Settings();
+    // }
     
     /**
      * Returns the rendered settings HTML, which will be inserted into the content
@@ -189,13 +196,13 @@ class SpicyAfterpay extends Plugin
      *
      * @return string The rendered settings HTML
      */
-    protected function settingsHtml(): string
-    {
-        return Craft::$app->view->renderTemplate(
-            'spicy-afterpay/settings',
-            [
-                'settings' => $this->getSettings()
-            ]
-        );
-    }
+    // protected function settingsHtml(): string
+    // {
+    //     return Craft::$app->view->renderTemplate(
+    //         'spicy-afterpay/settings',
+    //         [
+    //             'settings' => $this->getSettings()
+    //         ]
+    //     );
+    // }
 }
