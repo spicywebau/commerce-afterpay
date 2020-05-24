@@ -2,6 +2,8 @@
 
 namespace spicyweb\spicyafterpay\gateways;
 
+use spicyweb\spicyafterpay\gateways\driver\Gateway;
+
 use Craft;
 use craft\commerce\base\RequestResponseInterface;
 use craft\commerce\errors\PaymentException;
@@ -36,6 +38,11 @@ class Afterpay extends OffsiteGateway
      */
     public $sandboxMode;
     
+    /**
+     * @var string
+     */
+    public $region;
+    
     // Public Methods
     // =========================================================================
     
@@ -66,7 +73,7 @@ class Afterpay extends OffsiteGateway
      */
     public static function displayName(): string
     {
-        return Craft::t('commerce', 'Zip Pay');
+        return Craft::t('commerce', 'Afterpay');
     }
     
     /**
@@ -95,7 +102,7 @@ class Afterpay extends OffsiteGateway
         $view->setTemplateMode(View::TEMPLATE_MODE_CP);
         
         $view->registerJsFile($url);
-        $view->registerAssetBundle(SpicyZipAssetBundle::class);
+        $view->registerAssetBundle(SpicyAfterpayAssetBundle::class);
         
         $html = Craft::$app->getView()->renderTemplate('spicy-afterpay/paymentForm', $params);
         $view->setTemplateMode($previousMode);
@@ -125,6 +132,7 @@ class Afterpay extends OffsiteGateway
         $gateway->setMerchantId(Craft::parseEnv($this->merchantId));
         $gateway->setMerchantKey(Craft::parseEnv($this->merchantKey));
         $gateway->setTestMode($this->sandboxMode);
+        $gateway->setRegion($this->region);
         
         return $gateway;
     }
@@ -136,15 +144,6 @@ class Afterpay extends OffsiteGateway
     {
         return '\\'.Gateway::class;
     }
-    
-    /**
-     * @inheritdoc
-     * will probably need to create our own item bag class
-     */
-    // protected function getItemBagClassName(): string
-    // {
-    //     return ::class;
-    // }
     
     // Private Methods
     // =========================================================================

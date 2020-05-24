@@ -10,10 +10,12 @@
 
 namespace spicyweb\spicyafterpay\controllers;
 
+
 use spicyweb\spicyafterpay\SpicyAfterpay;
 
 use Craft;
 use craft\web\Controller;
+use yii\db\Exception;
 
 /**
  * Default Controller
@@ -46,34 +48,22 @@ class DefaultController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'do-something'];
+    protected $allowAnonymous = ['get-token'];
     
     // Public Methods
     // =========================================================================
     
-    /**
-     * Handle a request going to our plugin's index action URL,
-     * e.g.: actions/spicy-afterpay/default
-     *
-     * @return mixed
-     */
-    public function actionIndex()
+    // actions/spicy-afterpay/default/get-token
+    public function actionGetToken()
     {
-        $result = 'Welcome to the DefaultController actionIndex() method';
-        
-        return $result;
-    }
+        if (Craft::$app->request->acceptsJson && isset($_POST['cartId'])) {
+            $cartID = $_POST['cartId'];
     
-    /**
-     * Handle a request going to our plugin's actionDoSomething URL,
-     * e.g.: actions/spicy-afterpay/default/do-something
-     *
-     * @return mixed
-     */
-    public function actionDoSomething()
-    {
-        $result = 'Welcome to the DefaultController actionDoSomething() method';
-        
-        return $result;
+            $token = SpicyAfterpay::$plugin->spicyAfterpayService->getAfterpayToken($cartID);
+            
+            return $this->asJson([
+                'cartID' => $cartID,
+            ]);
+        }
     }
 }

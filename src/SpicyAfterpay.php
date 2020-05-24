@@ -106,33 +106,34 @@ class SpicyAfterpay extends Plugin
         // Craft::$app->view->registerTwigExtension(new SpicyAfterpayTwigExtension());
         
         // Register our site routes
-        // Event::on(
-        //     UrlManager::class,
-        //     UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-        //     function (RegisterUrlRulesEvent $event) {
-        //         $event->rules['siteActionTrigger1'] = 'spicy-afterpay/default';
-        //     }
-        // );
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                // ../get-afterpay-token
+                $event->rules['get-afterpay-token'] = 'spicy-afterpay/default/get-token';
+            }
+        );
         
         // Register our CP routes
         // Event::on(
         //     UrlManager::class,
         //     UrlManager::EVENT_REGISTER_CP_URL_RULES,
         //     function (RegisterUrlRulesEvent $event) {
-        //         $event->rules['cpActionTrigger1'] = 'spicy-afterpay/default/do-something';
+        //         $event->rules['get-afterpay-token'] = 'spicy-afterpay/default/get-token';
         //     }
         // );
         
         // Register our variables
-        Event::on(
-            CraftVariable::class,
-            CraftVariable::EVENT_INIT,
-            function (Event $event) {
-                /** @var CraftVariable $variable */
-                $variable = $event->sender;
-                $variable->set('spicyAfterpay', SpicyAfterpayVariable::class);
-            }
-        );
+        // Event::on(
+        //     CraftVariable::class,
+        //     CraftVariable::EVENT_INIT,
+        //     function (Event $event) {
+        //         /** @var CraftVariable $variable */
+        //         $variable = $event->sender;
+        //         $variable->set('spicyAfterpay', SpicyAfterpayVariable::class);
+        //     }
+        // );
         
         // Do something after we're installed
         // Event::on(

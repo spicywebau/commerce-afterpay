@@ -38,3 +38,24 @@
 	name: 'sandboxMode',
 	on: gateway.sandboxMode,
 }) }}
+
+{{ selectField({
+	label: 'Region'|t('commerce'),
+	name: 'region',
+	options: [
+		{
+			label: 'AU',
+			value: 'AU'
+		},
+		{
+			label: 'NZ',
+			value: 'NZ'
+		},
+		{
+			label: 'US',
+			value: 'US'
+		}
+	],
+	value: 'AU',
+	on: gateway.region,
+}) }}

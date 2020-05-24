@@ -14,6 +14,7 @@ use spicyweb\spicyafterpay\SpicyAfterpay;
 
 use Craft;
 use craft\base\Component;
+use craft\commerce\elements\Order;
 
 /**
  * SpicyAfterpayService Service
@@ -34,22 +35,19 @@ class SpicyAfterpayService extends Component
     // =========================================================================
     
     /**
-     * This function can literally be anything you want, and you can have as many service
-     * functions as you want
-     *
      * From any other plugin file, call it like this:
      *
-     *     SpicyAfterpay::$plugin->spicyAfterpayService->exampleService()
+     *     SpicyAfterpay::$plugin->spicyAfterpayService->getAfterpayToken()
      *
      * @return mixed
      */
-    public function exampleService()
+    
+    public function getAfterpayToken($cartID)
     {
-        $result = 'something';
-        // Check our Plugin's settings for `someAttribute`
-        if (SpicyAfterpay::$plugin->getSettings()->someAttribute) {
-        }
+        $cart = Order::find()->id($cartID)->one();
         
-        return $result;
+        
+        
+        return $cartID;
     }
 }
