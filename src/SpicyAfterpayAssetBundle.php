@@ -10,7 +10,7 @@ class SpicyAfterpayAssetBundle extends AssetBundle
      */
     public function init()
     {
-        $this->sourcePath = '@spicyweb/spicy-afterpay/resources';
+        $this->sourcePath = '@spicyweb/spicyafterpay/resources';
         
         $this->js = [
             'js/paymentForm.js',

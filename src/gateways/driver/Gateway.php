@@ -17,6 +17,7 @@ class Gateway extends AbstractGateway
             'merchantId' => '',
             'merchantKey' => '',
             'sandboxMode' => false,
+            'region' => 'AU'
         );
     }
     
@@ -38,6 +39,15 @@ class Gateway extends AbstractGateway
     public function setMerchantKey($value): Gateway
     {
         return $this->setParameter('merchantKey', $value);
+    }
+    
+    public function getRegion() {
+        return $this->getParameter('region');
+    }
+    
+    public function setRegion($value)
+    {
+        return $this->setParameter('region', $value);
     }
     
     public function authorize(array $parameters = array())

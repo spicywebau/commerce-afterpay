@@ -89,7 +89,9 @@ class Afterpay extends OffsiteGateway
      */
     public function getPaymentFormHtml(array $params)
     {
-        $url = '';
+        $url = $this->sandboxMode ? 'https://portal.sandbox.afterpay.com' : 'https://portal.afterpay.com';
+        $url .= '/afterpay.js';
+        
         $defaults = [
             'gateway' => $this
         ];
