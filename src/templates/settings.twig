@@ -59,3 +59,12 @@
 	value: 'AU',
 	on: gateway.region,
 }) }}
+
+{{ autosuggestField({
+	label: 'Button text'|t('commerce'),
+	id: 'buttonText',
+	class: 'ltr',
+	name: 'buttonText',
+	suggestEnvVars: false,
+	value: gateway.buttonText,
+}) }}

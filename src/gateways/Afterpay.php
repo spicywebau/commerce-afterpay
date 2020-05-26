@@ -2,23 +2,38 @@
 
 namespace spicyweb\spicyafterpay\gateways;
 
+use craft\commerce\models\PaymentSource;
+use craft\commerce\omnipay\base\RequestResponse;
+use craft\web\Response as WebResponse;
 use spicyweb\spicyafterpay\gateways\driver\Gateway;
 
 use Craft;
 use craft\commerce\base\RequestResponseInterface;
+use craft\commerce\elements\Order;
 use craft\commerce\errors\PaymentException;
+use craft\commerce\models\LineItem;
 use craft\commerce\models\payments\BasePaymentForm;
 use craft\commerce\models\Transaction;
-use craft\commerce\omnipay\base\OffsiteGateway;
+use craft\commerce\base\Gateway as BaseGateway;
+use craft\commerce\models\OrderAdjustment;
+use craft\helpers\UrlHelper;
 use craft\web\View;
+
 use Omnipay\Common\AbstractGateway;
 use Omnipay\Omnipay;
 
+use GuzzleHttp\Client;
+
 use spicyweb\spicyafterpay\SpicyAfterpay;
+use spicyweb\spicyafterpay\models\PaymentForm;
 use spicyweb\spicyafterpay\SpicyAfterpayAssetBundle;
+use spicyweb\spicyafterpay\gateways\responses\PurchaseResponse;
+use spicyweb\spicyafterpay\gateways\responses\CompletePurchaseResponse;
+
+use Throwable;
 use yii\base\Exception;
 
-class Afterpay extends OffsiteGateway
+class Afterpay extends BaseGateway
 {
     // Properties
     // =========================================================================
@@ -43,30 +58,13 @@ class Afterpay extends OffsiteGateway
      */
     public $region;
     
+    /**
+     * @var string
+     */
+    public $buttonText;
+    
     // Public Methods
     // =========================================================================
-    
-    /**
-     * @inheritdoc
-     */
-    public function completeAuthorize(Transaction $transaction): RequestResponseInterface
-    {
-        $request = $this->_prepareOffsiteTransactionConfirmationRequest($transaction);
-        $completeRequest = $this->prepareCompleteAuthorizeRequest($request);
-        
-        return $this->performRequest($completeRequest, $transaction);
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public function completePurchase(Transaction $transaction): RequestResponseInterface
-    {
-        $request = $this->_prepareOffsiteTransactionConfirmationRequest($transaction);
-        $completeRequest = $this->prepareCompletePurchaseRequest($request);
-        
-        return $this->performRequest($completeRequest, $transaction);
-    }
     
     /**
      * @inheritdoc
@@ -120,62 +118,285 @@ class Afterpay extends OffsiteGateway
         unset($request['card']);
     }
     
-    // Protected Methods
-    // =========================================================================
+    /**
+     * @inheritDoc
+     */
+    public function supportsAuthorize(): bool
+    {
+        return false;
+    }
     
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    protected function createGateway(): AbstractGateway
+    public function supportsCapture(): bool
     {
-        /** @var Gateway $gateway */
-        $gateway = static::createOmnipayGateway($this->getGatewayClassName());
+        return false;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function supportsCompleteAuthorize(): bool
+    {
+        return false;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function supportsPaymentSources(): bool
+    {
+        return false;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function supportsPurchase(): bool
+    {
+        return false;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function supportsCompletePurchase(): bool
+    {
+        return true;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function supportsRefund(): bool
+    {
+        return false;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function supportsPartialRefund(): bool
+    {
+        return false;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function supportsWebhooks(): bool
+    {
+        return false;
+    }
+    
+    public function getResponse($endpoint, $data) {
+        $headers = [
+            'Authorization' => $this->_buildAuthorizationHeader(),
+            'Content-type' => 'application/json',
+            'Accept' => 'application/json'
+        ];
         
-        $gateway->setMerchantId(Craft::parseEnv($this->merchantId));
-        $gateway->setMerchantKey(Craft::parseEnv($this->merchantKey));
-        $gateway->setTestMode($this->sandboxMode);
-        $gateway->setRegion($this->region);
+        $client = new Client();
         
-        return $gateway;
+        return $client->request(
+            'POST',
+            $endpoint,
+            [
+                'headers' => $headers,
+                'json' => $data,
+            ]
+        );
+    }
+    
+    public function getEndpoint() {
+        $isAUOrNZ = $this->region === 'AU' || $this->region === 'NZ';
+        
+        if ($isAUOrNZ) {
+            $url = $this->sandboxMode ? 'https://api-sandbox.afterpay.com' : 'https://api.afterpay.com';
+        } else {
+            $url = $this->sandboxMode ? 'https://api.us-sandbox.afterpay.com' : 'https://api.us.afterpay.com';
+        }
+        
+        return $url . '/v1/';
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function processWebHook(): WebResponse
+    {
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function createPaymentSource(BasePaymentForm $sourceData, int $userId): PaymentSource
+    {
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function deletePaymentSource($token): bool
+    {
+        return false;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getPaymentFormModel(): BasePaymentForm
+    {
+        return new PaymentForm();
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function refund(Transaction $transaction): RequestResponseInterface
+    {
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function authorize(Transaction $transaction, BasePaymentForm $form): RequestResponseInterface
+    {
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function capture(Transaction $transaction, string $reference): RequestResponseInterface
+    {
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function completeAuthorize(Transaction $transaction): RequestResponseInterface
+    {
     }
     
     /**
      * @inheritdoc
      */
-    protected function getGatewayClassName()
+    
+    // public function authorize(Transaction $transaction, BasePaymentForm $form): RequestResponseInterface
+    // {
+    //     return $this->_prepareTransactionOrderToken($transaction);
+    // }
+    
+    // public function completeAuthorize(Transaction $transaction): RequestResponseInterface
+    // {
+    //     // return $this->_prepareTransactionOrderToken($transaction);
+    // }
+    
+    public function purchase(Transaction $transaction, BasePaymentForm $form): RequestResponseInterface
     {
-        return '\\'.Gateway::class;
+        return $this->_prepareTransactionOrderToken($transaction);
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function completePurchase(Transaction $transaction): RequestResponseInterface
+    {
+        $data = [
+            'token' => Craft::$app->getRequest()->getQueryParam('orderToken'),
+            'merchantReference' => Craft::$app->getRequest()->getQueryParam('commerceTransactionHash'),
+        ];
+        
+        $endpoint = $this->getEndpoint() . 'payments/capture';
+        
+        return new CompletePurchaseResponse($this->getResponse($endpoint, $data));
     }
     
     // Private Methods
     // =========================================================================
     
-    /**
-     * Prepare the confirmation request for completeAuthorize and completePurchase requests.
-     *
-     * @param Transaction $transaction
-     * @return array
-     * @throws PaymentException if missing parameters
-     * @throws Exception
-     */
-    private function _prepareOffsiteTransactionConfirmationRequest(Transaction $transaction): array
+    private function _prepareTransactionOrderToken(Transaction $transaction) {
+    
+        /** @var Order $order */
+        $order = $transaction->getOrder();
+    
+        $data = [
+            'merchant' => [
+                'redirectConfirmUrl' => UrlHelper::actionUrl('commerce/payments/complete-payment', [
+                    'commerceTransactionId' => $transaction->id,
+                    'commerceTransactionHash' => $transaction->hash,
+                ]),
+                'redirectCancelUrl' => UrlHelper::siteUrl($order->cancelUrl),
+            ],
+            'merchantReference' => $transaction->hash,
+            'totalAmount' => [
+                'amount' => (float)$order->totalPrice,
+                'currency' => $order->currency,
+            ],
+            'consumer' => [
+                'phoneNumber' => $order->billingAddress->phone,
+                'givenNames' => $order->billingAddress->firstName,
+                'surname' => $order->billingAddress->lastName,
+                'email' => $order->email,
+            ],
+            'taxAmount' => [
+                'amount' => $order->getTotalTax(),
+                'currency' => $order->currency,
+            ],
+            'shippingAmount' => [
+                'amount' => $order->getTotalShippingCost(),
+                'currency' => $order->currency,
+            ],
+            'items' => array_map(function (LineItem $lineItem) use ($order) {
+                return [
+                    'quantity' => (int)$lineItem->qty,
+                    'name' => $lineItem->description,
+                    'sku' => $lineItem->sku,
+                    'price' => [
+                        'amount' => (float)$lineItem->salePrice,
+                        'currency' => $order->currency,
+                    ],
+                ];
+            }, $order->lineItems),
+        ];
+    
+        if($order->billingAddress) {
+            $data['billing'] = [
+                'name' => $order->billingAddress->fullName,
+                'line1' => $order->billingAddress->address1,
+                'line2' => $order->billingAddress->address2,
+                'suburb' => $order->billingAddress->city,
+                'state' => $order->billingAddress->stateValue,
+                'postcode' => $order->billingAddress->zipCode,
+                'countryCode' => $order->billingAddress->country->iso,
+                'phoneNumber' => $order->billingAddress->phone,
+            ];
+        }
+    
+        if($order->shippingAddress) {
+            $data['shipping'] = [
+                'name' => $order->shippingAddress->fullName,
+                'line1' => $order->shippingAddress->address1,
+                'line2' => $order->shippingAddress->address2,
+                'suburb' => $order->shippingAddress->city,
+                'state' => $order->shippingAddress->stateValue,
+                'postcode' => $order->shippingAddress->zipCode,
+                'countryCode' => $order->shippingAddress->country->iso,
+                'phoneNumber' => $order->shippingAddress->phone,
+            ];
+        }
+    
+        $endpoint = $this->getEndpoint() . 'orders';
+        
+        return new PurchaseResponse($this->getResponse($endpoint, $data));
+    }
+    
+    private function _buildAuthorizationHeader()
     {
-        $request = $this->createRequest($transaction);
+        $merchantId = $this->merchantId;
+        $merchantSecret = $this->merchantKey;
         
-        $token = Craft::$app->getRequest()->getParam('token');
-        $payerId = Craft::$app->getRequest()->getParam('PayerID');
-        
-        if (!$token) {
-            throw new PaymentException('Missing token');
-        }
-        
-        $request['token'] = $token;
-        
-        if (!$payerId) {
-            throw new PaymentException('Missing payer ID');
-        }
-        $request['PayerID'] = $payerId;
-        
-        return $request;
+        return 'Basic ' . base64_encode($merchantId . ':' . $merchantSecret);
     }
 }

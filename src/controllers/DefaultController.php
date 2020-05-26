@@ -56,14 +56,32 @@ class DefaultController extends Controller
     // actions/spicy-afterpay/default/get-token
     public function actionGetToken()
     {
-        if (Craft::$app->request->acceptsJson && isset($_POST['cartId'])) {
+        $returnData = [
+            'cartID' => null,
+            'success' => false
+        ];
+        if (isset($_POST['cartId'])) {
             $cartID = $_POST['cartId'];
+            $cancelUrl = Craft::$app->request->getValidatedBodyParam('cancelUrl');
+            $redirectUrl = Craft::$app->request->getValidatedBodyParam('redirect');
+            $gatewayId = Craft::$app->request->getBodyParam('gatewayId');
     
-            $token = SpicyAfterpay::$plugin->spicyAfterpayService->getAfterpayToken($cartID);
+            $response = SpicyAfterpay::$plugin->spicyAfterpayService->getAfterpayToken($cartID, $cancelUrl, $redirectUrl, $gatewayId);
             
-            return $this->asJson([
-                'cartID' => $cartID,
-            ]);
+            if ($response && $response->getStatusCode() === 201) {
+                $data = json_decode($response->getBody(), true);
+                $token = isset($data['token']) && !empty($data['token']) ? $data['token'] : null;
+    
+                if ($token) {
+                    $returnData = [
+                        'cartID' => $cartID,
+                        'token' => $token,
+                        'success' => true
+                    ];
+                }
+            }
         }
+    
+        return $this->asJson($returnData);
     }
 }

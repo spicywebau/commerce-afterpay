@@ -2,6 +2,11 @@
 
 namespace spicyweb\spicyafterpay\gateways\driver;
 
+use spicyweb\spicyafterpay\gateways\driver\message\AuthorizeRequest;
+use spicyweb\spicyafterpay\gateways\driver\message\CompleteAuthorizeRequest;
+use spicyweb\spicyafterpay\gateways\driver\message\CompletePurchaseRequest;
+// use spicyweb\spicyafterpay\gateways\driver\message\CaptureRequest;
+
 use Omnipay\Common\AbstractGateway;
 
 class Gateway extends AbstractGateway
@@ -52,37 +57,17 @@ class Gateway extends AbstractGateway
     
     public function authorize(array $parameters = array())
     {
-        return $this->createRequest('\Omnipay\PayPal\Message\ExpressAuthorizeRequest', $parameters);
     }
     
     public function completeAuthorize(array $parameters = array())
     {
-        return $this->createRequest('\Omnipay\PayPal\Message\ExpressCompleteAuthorizeRequest', $parameters);
     }
     
     public function purchase(array $parameters = array())
     {
-        return $this->authorize($parameters);
     }
     
     public function completePurchase(array $parameters = array())
     {
-        return $this->createRequest('\Omnipay\PayPal\Message\ExpressCompletePurchaseRequest', $parameters);
     }
-    
-    public function capture(array $parameters = array())
-    {
-        return $this->createRequest('\Omnipay\PayPal\Message\CaptureRequest', $parameters);
-    }
-    
-    // public function refund(array $parameters = array())
-    // {
-    //     return $this->createRequest('', $parameters);
-    // }
-    
-    // public function void(array $parameters = array())
-    // {
-    //     return $this->createRequest('\Omnipay\PayPal\Message\ExpressVoidRequest', $parameters);
-    // }
-    
 }
