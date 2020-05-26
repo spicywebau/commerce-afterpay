@@ -49,6 +49,7 @@ class SpicyAfterpayService extends Component
      * @return mixed
      * @throws \craft\commerce\errors\TransactionException
      * @throws \yii\base\Exception
+     * @throws \Throwable
      */
     
     public function getAfterpayToken($cartID, $cancelUrl, $redirect, $gatewayId)

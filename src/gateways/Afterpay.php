@@ -279,20 +279,6 @@ class Afterpay extends BaseGateway
     {
     }
     
-    /**
-     * @inheritdoc
-     */
-    
-    // public function authorize(Transaction $transaction, BasePaymentForm $form): RequestResponseInterface
-    // {
-    //     return $this->_prepareTransactionOrderToken($transaction);
-    // }
-    
-    // public function completeAuthorize(Transaction $transaction): RequestResponseInterface
-    // {
-    //     // return $this->_prepareTransactionOrderToken($transaction);
-    // }
-    
     public function purchase(Transaction $transaction, BasePaymentForm $form): RequestResponseInterface
     {
         return $this->_prepareTransactionOrderToken($transaction);
