@@ -110,31 +110,31 @@ class SpicyAfterpayService extends Component
             }, $order->lineItems),
         ];
         
-        // if ($order->billingAddress) {
-        //     $data['billing'] = [
-        //         'name' => $order->billingAddress->fullName,
-        //         'line1' => $order->billingAddress->address1,
-        //         'line2' => $order->billingAddress->address2,
-        //         'suburb' => $order->billingAddress->city,
-        //         'state' => $order->billingAddress->stateValue,
-        //         'postcode' => $order->billingAddress->zipCode,
-        //         'countryCode' => $order->billingAddress->country->iso,
-        //         'phoneNumber' => $order->billingAddress->phone,
-        //     ];
-        // }
-        //
-        // if ($order->shippingAddress) {
-        //     $data['shipping'] = [
-        //         'name' => $order->shippingAddress->fullName,
-        //         'line1' => $order->shippingAddress->address1,
-        //         'line2' => $order->shippingAddress->address2,
-        //         'suburb' => $order->shippingAddress->city,
-        //         'state' => $order->shippingAddress->stateValue,
-        //         'postcode' => $order->shippingAddress->zipCode,
-        //         'countryCode' => $order->shippingAddress->country->iso,
-        //         'phoneNumber' => $order->shippingAddress->phone,
-        //     ];
-        // }
+        if ($order->billingAddress) {
+            $data['billing'] = [
+                'name' => $this->_getFullName($order->billingAddress),
+                'line1' => $order->billingAddress->address1,
+                'line2' => $order->billingAddress->address2,
+                'suburb' => $order->billingAddress->city,
+                'state' => $order->billingAddress->stateValue,
+                'postcode' => $order->billingAddress->zipCode,
+                'countryCode' => $order->billingAddress->country->iso,
+                'phoneNumber' => $order->billingAddress->phone,
+            ];
+        }
+        
+        if ($order->shippingAddress) {
+            $data['shipping'] = [
+                'name' => $this->_getFullName($order->shippingAddress),
+                'line1' => $order->shippingAddress->address1,
+                'line2' => $order->shippingAddress->address2,
+                'suburb' => $order->shippingAddress->city,
+                'state' => $order->shippingAddress->stateValue,
+                'postcode' => $order->shippingAddress->zipCode,
+                'countryCode' => $order->shippingAddress->country->iso,
+                'phoneNumber' => $order->shippingAddress->phone,
+            ];
+        }
     
         $endpoint = $gateway->getEndpoint() . 'orders';
         
@@ -149,5 +149,16 @@ class SpicyAfterpayService extends Component
         }
         
         return false;
+    }
+    
+    private function _getFullName($address)
+    {
+        if (empty($address->fullName)) {
+            $fullName = $address->firstName . ' ' . $address->lastName;
+        } else {
+            $fullName = $address->fullName;
+        }
+        
+        return $fullName;
     }
 }
