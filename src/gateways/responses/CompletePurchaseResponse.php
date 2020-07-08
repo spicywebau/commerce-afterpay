@@ -23,7 +23,7 @@ class CompletePurchaseResponse implements RequestResponseInterface
     
     public function getTransactionReference(): string
     {
-        return $this->data['id'];
+        return $this->data['id'] ?? '';
     }
     
     public function getRedirectMethod(): string

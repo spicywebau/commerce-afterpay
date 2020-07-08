@@ -224,6 +224,7 @@ class Afterpay extends BaseGateway
             [
                 'headers' => $headers,
                 'json' => $data,
+                'http_errors' => false
             ]
         );
     }
