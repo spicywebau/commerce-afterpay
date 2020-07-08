@@ -191,10 +191,29 @@ class Afterpay extends BaseGateway
     }
     
     public function getResponse($endpoint, $data) {
+        
+        $commerce = Craft::$app->plugins->getPlugin('commerce');
+        
+        $pluginName = SpicyAfterpay::$plugin->name;
+        $pluginVersion = SpicyAfterpay::$plugin->getVersion();
+        $pluginDetail = $pluginName . '/' . $pluginVersion;
+        
+        $platformName = 'Craft Commerce';
+        $platformVersion = '3.0.0';
+        if ($commerce) {
+            $platformName = $commerce->name;
+            $platformVersion = $commerce->getVersion();
+        }
+        
+        $platformDetails = $platformName .'/' . $platformVersion . ';';
+        $phpDetails = 'PHP/'. PHP_VERSION . ';';
+        $merchantDetails = 'Merchant/' . $this->merchantId;
+        
         $headers = [
             'Authorization' => $this->_buildAuthorizationHeader(),
             'Content-type' => 'application/json',
-            'Accept' => 'application/json'
+            'Accept' => 'application/json',
+            'User-Agent' => $pluginDetail . '('. $platformDetails . $phpDetails . $merchantDetails . ') ' . UrlHelper::siteUrl()
         ];
         
         $client = new Client();
