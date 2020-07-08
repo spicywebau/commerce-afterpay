@@ -27,7 +27,6 @@ function initAfterpayCheckout() {
 
 			$.post(paymentUrl, postData)
 				.done(function(data) {
-					console.log(data);
 					if (data.success) {
 						AfterPay.redirect({token: data.token});
 					} else {

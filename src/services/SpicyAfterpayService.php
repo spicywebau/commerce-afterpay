@@ -58,6 +58,7 @@ class SpicyAfterpayService extends Component
         
         if ($redirect && !$order->returnUrl) {
             $order->returnUrl = $redirect;
+            $order->cancelUrl = $cancelUrl;
             Craft::$app->getElements()->saveElement($order, false);
         }
         
