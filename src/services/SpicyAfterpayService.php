@@ -55,10 +55,18 @@ class SpicyAfterpayService extends Component
     public function getAfterpayToken($cartID, $cancelUrl, $redirect, $gatewayId)
     {
         $order = Order::find()->id($cartID)->one();
-        
+        $saveOrder = false;
         if ($redirect && !$order->returnUrl) {
             $order->returnUrl = $redirect;
+            $saveOrder = true;
+        }
+        
+        if ($cancelUrl && !$order->cancelUrl) {
             $order->cancelUrl = $cancelUrl;
+            $saveOrder = true;
+        }
+        
+        if ($saveOrder) {
             Craft::$app->getElements()->saveElement($order, false);
         }
         
