@@ -35,25 +35,19 @@
 	required: true
 }) }}
 
+{{ textField({
+	label: 'Country Code',
+	id: 'merchantCC',
+	class: 'ltr',
+	name: 'region',
+	maxlength: 2,
+	placeholder: 'ISO 3166-1 alpha-2 two character country code of the Merchant Account.',
+	value: gateway.region,
+	required: true
+}) }}
+
 {{ lightswitchField({
 	label: 'Sandbox Mode?',
 	name: 'sandboxMode',
 	on: gateway.sandboxMode,
-}) }}
-
-{{ selectField({
-	label: 'Region',
-	name: 'region',
-	options: [
-		{
-			label: 'AU/NZ',
-			value: 'AU/NZ'
-		},
-		{
-			label: 'US/CA',
-			value: 'US/CA'
-		}
-	],
-	value: 'AU',
-	on: gateway.region,
 }) }}
