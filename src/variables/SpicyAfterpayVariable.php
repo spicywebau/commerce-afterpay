@@ -41,16 +41,15 @@ class SpicyAfterpayVariable
      * Or, if your variable requires parameters from Twig:
      *
      *     {{ craft.spicyAfterpay.exampleVariable(twigValue) }}
-     *
-     * @param null $optional
-     * @return string
      */
-    public function exampleVariable($optional = null)
+    
+    /*
+     * return the afterpay api status.
+     * true = online
+     * false = offline
+     */
+    public function afterpayStatus(): bool
     {
-        $result = "And away we go to the Twig template...";
-        if ($optional) {
-            $result = "I'm feeling optional today...";
-        }
-        return $result;
+        return SpicyAfterpay::$plugin->spicyAfterpayService->checkAfterpayStatus();
     }
 }

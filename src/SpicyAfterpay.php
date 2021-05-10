@@ -10,13 +10,6 @@
 
 namespace spicyweb\spicyafterpay;
 
-use craft\commerce\services\Gateways;
-use craft\events\RegisterComponentTypesEvent;
-use spicyweb\spicyafterpay\services\SpicyAfterpayService as SpicyAfterpayServiceService;
-use spicyweb\spicyafterpay\variables\SpicyAfterpayVariable;
-use spicyweb\spicyafterpay\twigextensions\SpicyAfterpayTwigExtension;
-use spicyweb\spicyafterpay\models\Settings;
-
 use Craft;
 use craft\base\Plugin;
 use craft\services\Plugins;
@@ -24,8 +17,15 @@ use craft\events\PluginEvent;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 use craft\events\RegisterUrlRulesEvent;
+use craft\commerce\services\Gateways;
+use craft\events\RegisterComponentTypesEvent;
 
-use spicyweb\spicyafterpay\gateways\Afterpay;
+use spicyweb\spicyafterpay\services\SpicyAfterpayService as SpicyAfterpayServiceService;
+use spicyweb\spicyafterpay\variables\SpicyAfterpayVariable;
+//use spicyweb\spicyafterpay\twigextensions\SpicyAfterpayTwigExtension;
+use spicyweb\spicyafterpay\models\Settings;
+use spicyweb\spicyafterpay\gateways\Gateway;
+
 use yii\base\Event;
 
 /**
@@ -106,14 +106,14 @@ class SpicyAfterpay extends Plugin
         // Craft::$app->view->registerTwigExtension(new SpicyAfterpayTwigExtension());
         
         // Register our site routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                // ../get-afterpay-token
-                $event->rules['get-afterpay-token'] = 'spicy-afterpay/default/get-token';
-            }
-        );
+        //Event::on(
+        //    UrlManager::class,
+        //    UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+        //    function (RegisterUrlRulesEvent $event) {
+        //        // ../get-afterpay-token
+        //        $event->rules['get-afterpay-token'] = 'spicy-afterpay/default/get-token';
+        //    }
+        //);
         
         // Register our CP routes
         // Event::on(
@@ -124,16 +124,16 @@ class SpicyAfterpay extends Plugin
         //     }
         // );
         
-        // Register our variables
-        // Event::on(
-        //     CraftVariable::class,
-        //     CraftVariable::EVENT_INIT,
-        //     function (Event $event) {
-        //         /** @var CraftVariable $variable */
-        //         $variable = $event->sender;
-        //         $variable->set('spicyAfterpay', SpicyAfterpayVariable::class);
-        //     }
-        // );
+         //Register our variables
+         Event::on(
+             CraftVariable::class,
+             CraftVariable::EVENT_INIT,
+             function (Event $event) {
+                 /** @var CraftVariable $variable */
+                 $variable = $event->sender;
+                 $variable->set('spicyAfterpay', SpicyAfterpayVariable::class);
+             }
+         );
         
         // Do something after we're installed
         // Event::on(
@@ -174,7 +174,7 @@ class SpicyAfterpay extends Plugin
         );
     
         Event::on(Gateways::class, Gateways::EVENT_REGISTER_GATEWAY_TYPES,  function(RegisterComponentTypesEvent $event) {
-            $event->types[] = Afterpay::class;
+            $event->types[] = Gateway::class;
         });
     }
     

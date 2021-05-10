@@ -2,7 +2,7 @@
 	"name": "spicyweb/spicy-afterpay",
 	"description": "Afterpay gateway for craft commerce",
 	"type": "craft-plugin",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"keywords": [
 		"craft",
 		"cms",
@@ -25,7 +25,8 @@
 		"craftcms/cms": "^3.4.0",
 		"craftcms/commerce": "^3.0.0",
 		"craftcms/commerce-omnipay": "^2.0.0",
-		"omnipay/common": "^3.0.3"
+		"omnipay/common": "^3.0.3",
+		"afterpay-global/afterpay-sdk-php": "^1.1"
 	},
 	"autoload": {
 		"psr-4": {

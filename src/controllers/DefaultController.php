@@ -56,32 +56,33 @@ class DefaultController extends Controller
     // actions/spicy-afterpay/default/get-token
     public function actionGetToken()
     {
-        $returnData = [
-            'cartID' => null,
-            'success' => false
-        ];
-        if (isset($_POST['cartId'])) {
-            $cartID = $_POST['cartId'];
-            $cancelUrl = Craft::$app->request->getValidatedBodyParam('cancelUrl');
-            $redirectUrl = Craft::$app->request->getValidatedBodyParam('redirect');
-            $gatewayId = Craft::$app->request->getBodyParam('gatewayId');
-    
-            $response = SpicyAfterpay::$plugin->spicyAfterpayService->getAfterpayToken($cartID, $cancelUrl, $redirectUrl, $gatewayId);
-            
-            if ($response && $response->getStatusCode() === 201) {
-                $data = json_decode($response->getBody(), true);
-                $token = isset($data['token']) && !empty($data['token']) ? $data['token'] : null;
-    
-                if ($token) {
-                    $returnData = [
-                        'cartID' => $cartID,
-                        'token' => $token,
-                        'success' => true
-                    ];
-                }
-            }
-        }
-    
-        return $this->asJson($returnData);
+        //$returnData = [
+        //    'cartID' => null,
+        //    'success' => false
+        //];
+        //if (isset($_POST['cartId'])) {
+        //    $cartID = $_POST['cartId'];
+        //    $cancelUrl = Craft::$app->request->getValidatedBodyParam('cancelUrl');
+        //    $redirectUrl = Craft::$app->request->getValidatedBodyParam('redirect');
+        //    $gatewayId = Craft::$app->request->getBodyParam('gatewayId');
+        //
+        //    $response = SpicyAfterpay::$plugin->spicyAfterpayService->getAfterpayToken($cartID, $cancelUrl, $redirectUrl, $gatewayId);
+        //
+        //    if ($response && $response->getStatusCode() === 201) {
+        //        $data = json_decode($response->getBody(), true);
+        //        $token = isset($data['token']) && !empty($data['token']) ? $data['token'] : null;
+        //
+        //        if ($token) {
+        //            $returnData = [
+        //                'cartID' => $cartID,
+        //                'token' => $token,
+        //                'success' => true
+        //            ];
+        //        }
+        //    }
+        //}
+        //
+        //return $this->asJson($returnData);
+        return 'hello';
     }
 }

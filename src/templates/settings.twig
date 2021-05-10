@@ -16,55 +16,44 @@
 {% from "_includes/forms" import textField, lightswitchField, selectField, autosuggestField %}
 
 {{ autosuggestField({
-	label: 'Merchant ID'|t('commerce'),
+	label: 'Merchant ID',
 	id: 'merchantId',
 	class: 'ltr',
 	name: 'merchantId',
 	suggestEnvVars: true,
 	value: gateway.merchantId,
+	required: true
 }) }}
 
 {{ autosuggestField({
-	label: 'Merchant Key'|t('commerce'),
+	label: 'Merchant Key',
 	id: 'merchantKey',
 	class: 'ltr',
 	name: 'merchantKey',
 	suggestEnvVars: true,
 	value: gateway.merchantKey,
+	required: true
 }) }}
 
 {{ lightswitchField({
-	label: 'Sandbox Mode?'|t('commerce'),
+	label: 'Sandbox Mode?',
 	name: 'sandboxMode',
 	on: gateway.sandboxMode,
 }) }}
 
 {{ selectField({
-	label: 'Region'|t('commerce'),
+	label: 'Region',
 	name: 'region',
 	options: [
 		{
-			label: 'AU',
-			value: 'AU'
+			label: 'AU/NZ',
+			value: 'AU/NZ'
 		},
 		{
-			label: 'NZ',
-			value: 'NZ'
-		},
-		{
-			label: 'US',
-			value: 'US'
+			label: 'US/CA',
+			value: 'US/CA'
 		}
 	],
 	value: 'AU',
 	on: gateway.region,
-}) }}
-
-{{ autosuggestField({
-	label: 'Button text'|t('commerce'),
-	id: 'buttonText',
-	class: 'ltr',
-	name: 'buttonText',
-	suggestEnvVars: false,
-	value: gateway.buttonText,
 }) }}
