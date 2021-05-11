@@ -26,8 +26,10 @@ use Afterpay\SDK\HTTP\Request\CreateCheckout as AfterpayCreateCheckoutRequest;
 use Afterpay\SDK\HTTP\Request\ImmediatePaymentCapture as AfterpayImmediatePaymentCaptureRequest;
 use Afterpay\SDK\HTTP\Request\DeferredPaymentAuth as AfterpayDeferredPaymentAuthRequest;
 use Afterpay\SDK\Helper\StringHelper as AfterpayStringHelper;
-use Afterpay\SDK\Model\Payment as AfterpayPayment;
+
+// use Afterpay\SDK\Model\Payment as AfterpayPayment;
 use Afterpay\SDK\HTTP\Request\DeferredPaymentCapture as AfterpayDeferredPaymentCaptureRequest;
+use Afterpay\SDK\HTTP\Request\CreateRefund as AfterpayCreateRefundRequest;
 
 use spicyweb\spicyafterpay\SpicyAfterpay;
 use spicyweb\spicyafterpay\gateways\responses\CheckoutResponse as SAPCheckoutResponse;
@@ -159,18 +161,25 @@ class Gateway extends BaseGateway
             ]
         );
 
-        $capturePaymentRequest->setMerchantAccount($this->_merchant);
+        try {
+            $capturePaymentRequest->setMerchantAccount($this->_merchant);
 
-        if ($capturePaymentRequest->send()) {
-            // $order = new AfterpayPayment($capturePaymentRequest->getResponse()->getParsedBody());
-            $paymentEvent = $capturePaymentRequest->getResponse()->getPaymentEvent();
+            if ($capturePaymentRequest->send()) {
+                $paymentEvent = $capturePaymentRequest->getResponse()->getParsedBody();
 
-            return $this->getResponseModel($paymentEvent);
+                return $this->getResponseModel($paymentEvent);
+            }
+
+            $error = $capturePaymentRequest->getResponse()->getParsedBody();
+
+            throw new \Exception($error);
+        } catch (\Exception $e) {
+            return $this->getResponseModel(
+                [
+                    'message' => $e
+                ]
+            );
         }
-
-        $error = $capturePaymentRequest->getResponse()->getParsedBody();
-
-        return $this->getResponseModel(null);
     }
 
     /**
@@ -225,7 +234,39 @@ class Gateway extends BaseGateway
      */
     public function refund(Transaction $transaction): RequestResponseInterface
     {
-        // TODO: Implement refund() method.
+        $parentTransaction = $transaction->getParent();
+        if (!$parentTransaction) {
+            Craft::error('Cannot retrieve parent transaction', __METHOD__);
+        }
+
+        $refundRequest = new AfterpayCreateRefundRequest(
+            [
+                'amount' => [
+                    'amount' => $transaction->paymentAmount,
+                    'currency' => $transaction->paymentCurrency
+                ]
+            ]
+        );
+
+        try {
+            $refundRequest->setMerchantAccount($this->_merchant);
+            $refundRequest->setOrderId($parentTransaction->reference);
+
+            if ($refundRequest->send()) {
+                $refund = $refundRequest->getResponse()->getParsedBody();
+                $refund['statusCode'] = $refundRequest->getResponse()->getHttpStatusCode();
+                $this->getRefundResponseModel($refund);
+            }
+
+            $error = ['Can\'t create a refund for a declined order.'];
+            throw new \Exception($error);
+        } catch (\Exception $e) {
+            return $this->getRefundResponseModel(
+                [
+                    'message' => $e
+                ]
+            );
+        }
     }
 
     /**
@@ -312,6 +353,11 @@ class Gateway extends BaseGateway
         return new SAPCheckoutResponse($data);
     }
 
+    public function getRefundResponseModel($data): RequestResponseInterface
+    {
+        return new SAPRefundResponse($data);
+    }
+
     /*
      * PRIVATE METHODS
      */
@@ -380,7 +426,7 @@ class Gateway extends BaseGateway
                     if (!$paymentResponse->isSuccessful()) {
                         $error = $data;
                         Craft::warning("[Afterpay] invalid {$error}");
-                        throw new \Exception('Invalid data');
+                        throw new \Exception($error);
                     }
 
                     // else return the response model with the data
@@ -392,11 +438,15 @@ class Gateway extends BaseGateway
             $errors = $request->getValidationErrors();
             $errors = Json::encode($errors);
             Craft::warning("[Afterpay] invalid {$errors}");
-            throw new \Exception('Invalid data');
+            throw new \Exception($errors);
         } catch (\Exception $e) {
             $order->addError('afterpay', 'Error found when trying to submit purchase request');
 
-            return $this->getResponseModel(null);
+            return $this->getResponseModel(
+                [
+                    'message' => $e
+                ]
+            );
         }
     }
 

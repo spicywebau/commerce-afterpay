@@ -39,7 +39,7 @@ class CheckoutResponse implements RequestResponseInterface
             return false;
         }
 
-        return $data['id'] && ($data['paymentState'] === 'AUTH_APPROVED' || $data['paymentState'] === 'PARTIALLY_CAPTURED');
+        return ($data['id'] && ($data['paymentState'] === 'AUTH_APPROVED' || $data['paymentState'] === 'PARTIALLY_CAPTURED')) ?? false;
     }
 
     /**
@@ -103,7 +103,7 @@ class CheckoutResponse implements RequestResponseInterface
      */
     public function getMessage(): string
     {
-        return '';
+        return $this->data['message'] ?? '';
     }
 
     /**
