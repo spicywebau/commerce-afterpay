@@ -23,6 +23,11 @@ use craft\web\View;
 
 use Afterpay\SDK\MerchantAccount as AfterpayMerchantAccount;
 use Afterpay\SDK\HTTP\Request\CreateCheckout as AfterpayCreateCheckoutRequest;
+use Afterpay\SDK\HTTP\Request\ImmediatePaymentCapture as AfterpayImmediatePaymentCaptureRequest;
+use Afterpay\SDK\HTTP\Request\DeferredPaymentAuth as AfterpayDeferredPaymentAuthRequest;
+use Afterpay\SDK\Helper\StringHelper as AfterpayStringHelper;
+use Afterpay\SDK\Model\Payment as AfterpayPayment;
+use Afterpay\SDK\HTTP\Request\DeferredPaymentCapture as AfterpayDeferredPaymentCaptureRequest;
 
 use spicyweb\spicyafterpay\SpicyAfterpay;
 use spicyweb\spicyafterpay\gateways\responses\CheckoutResponse as SAPCheckoutResponse;
@@ -38,42 +43,42 @@ class Gateway extends BaseGateway
 {
     // Public Properties
     // =========================================================================
-    
+
     /**
      * @var string
      */
     public $merchantId;
-    
+
     /**
      * @var string
      */
     public $merchantKey;
-    
+
     /**
      * @var bool
      */
     public $sandboxMode;
-    
+
     /**
      * @var string
      */
     public $region;
-    
+
     /*
      * Private Properties
      */
     private $_merchant;
-    
+
     // Public Methods
     // =========================================================================
-    
+
     public function init()
     {
         parent::init();
-        
+
         $this->_merchant = $this->setMerchant();
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -81,12 +86,15 @@ class Gateway extends BaseGateway
     {
         return 'Afterpay';
     }
-    
+
     public function getSettingsHtml()
     {
-        return Craft::$app->getView()->renderTemplate('spicy-afterpay/settings', ['gateway' => $this]);
+        return Craft::$app->getView()->renderTemplate(
+            'spicy-afterpay/settings',
+            ['gateway' => $this]
+        );
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -95,70 +103,104 @@ class Gateway extends BaseGateway
         $paymentFormModel = $this->getPaymentFormModel();
         $defaults = [
             'gateway' => $this,
-            'currency' => CommercePlugin::getInstance()->getPaymentCurrencies()->getPrimaryPaymentCurrencyIso(),
+            'currency' => CommercePlugin::getInstance()->getPaymentCurrencies(
+            )->getPrimaryPaymentCurrencyIso(),
             'paymentForm' => $paymentFormModel
         ];
-        
+
         $params = array_merge($defaults, $params);
         $view = Craft::$app->getView();
-        
+
         $previousMode = $view->getTemplateMode();
         $view->setTemplateMode(View::TEMPLATE_MODE_CP);
         $html = Craft::$app->getView()->renderTemplate('spicy-afterpay/paymentForm', $params);
-        
+
         $view->setTemplateMode($previousMode);
-        
+
         return $html;
     }
-    
+
     /**
      * @inheritDoc
+     * @throws \Exception
      */
-    public function authorize(Transaction $transaction, BasePaymentForm $form): RequestResponseInterface
-    {
-        // TODO: Implement authorize() method.
+    public function authorize(
+        Transaction $transaction,
+        BasePaymentForm $form
+    ): RequestResponseInterface {
+        return $this->checkout($transaction, 'authorize');
     }
-    
+
     /**
      * @inheritDoc
      */
     public function capture(Transaction $transaction, string $reference): RequestResponseInterface
     {
-        // TODO: Implement capture() method.
+        $parentTransaction = $transaction->getParent();
+
+        if (!$parentTransaction) {
+            Craft::error('Cannot retrieve parent transaction', __METHOD__);
+        }
+
+        $response = Json::decode($parentTransaction->response, true);
+        $authorizationId = $response['id'] ?? null;
+
+        if (!$authorizationId) {
+            Craft::error('An Authorization ID is required to capture', __METHOD__);
+        }
+
+        $capturePaymentRequest = new AfterpayDeferredPaymentCaptureRequest(
+            [
+                'requestId' => AfterpayStringHelper::generateUuid(),
+                'amount' => [
+                    $response['openToCaptureAmount']['amount'],
+                    $response['openToCaptureAmount']['currency']
+                ]
+            ]
+        );
+
+        $capturePaymentRequest->setMerchantAccount($this->_merchant);
+
+        if ($capturePaymentRequest->send()) {
+            // $order = new AfterpayPayment($capturePaymentRequest->getResponse()->getParsedBody());
+            $paymentEvent = $capturePaymentRequest->getResponse()->getPaymentEvent();
+
+            return $this->getResponseModel($paymentEvent);
+        }
+
+        $error = $capturePaymentRequest->getResponse()->getParsedBody();
+
+        return $this->getResponseModel(null);
     }
-    
+
     /**
      * @inheritDoc
      */
     public function completeAuthorize(Transaction $transaction): RequestResponseInterface
     {
-        // TODO: Implement completeAuthorize() method.
     }
-    
+
     /**
      * @inheritDoc
      */
     public function completePurchase(Transaction $transaction): RequestResponseInterface
     {
-        // TODO: Implement completePurchase() method.
     }
-    
+
     /**
      * @inheritDoc
      */
     public function createPaymentSource(BasePaymentForm $sourceData, int $userId): PaymentSource
     {
-        // TODO: Implement createPaymentSource() method.
     }
-    
+
     /**
      * @inheritDoc
      */
     public function deletePaymentSource($token): bool
     {
-        // TODO: Implement deletePaymentSource() method.
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -166,37 +208,18 @@ class Gateway extends BaseGateway
     {
         return new AfterpayPaymentForm();
     }
-    
+
     /**
      * @inheritDoc
      * @throws \Exception
      */
-    public function purchase(Transaction $transaction, BasePaymentForm $form): RequestResponseInterface
-    {
-        // TODO: CURRENTLY DOING
-        $order = $transaction->order;
-        try {
-            $requestData = $this->buildCheckoutRequest($transaction);
-            $request = new AfterpayCreateCheckoutRequest($requestData);
-            $request->setMerchantAccount($this->_merchant);
-            
-            if ($request->isValid()) {
-                $request->send();
-                $data = $request->getResponse()->getParsedBody();
-                
-                return $this->getResponseModel($data);
-            } else {
-                $errors = $request->getValidationErrors();
-                $errors = Json::encode($errors);
-                Craft::warning("[Afterpay] invalid {$errors}");
-                throw new \Exception('Invalid data');
-            }
-        } catch (\Exception $e) {
-            $order->addError('afterpay', 'Error found when trying to submit purchase request');
-            throw new \Exception('Invalid data');
-        }
+    public function purchase(
+        Transaction $transaction,
+        BasePaymentForm $form
+    ): RequestResponseInterface {
+        return $this->checkout($transaction, 'purchase');
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -204,15 +227,14 @@ class Gateway extends BaseGateway
     {
         // TODO: Implement refund() method.
     }
-    
+
     /**
      * @inheritDoc
      */
     public function processWebHook(): WebResponse
     {
-        throw new NotSupportedException();
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -220,7 +242,7 @@ class Gateway extends BaseGateway
     {
         return true;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -228,23 +250,23 @@ class Gateway extends BaseGateway
     {
         return true;
     }
-    
+
     /**
      * @inheritDoc
      */
     public function supportsCompleteAuthorize(): bool
     {
-        return true;
+        return false;
     }
-    
+
     /**
      * @inheritDoc
      */
     public function supportsCompletePurchase(): bool
     {
-        return true;
+        return false;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -252,7 +274,7 @@ class Gateway extends BaseGateway
     {
         return false;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -260,7 +282,7 @@ class Gateway extends BaseGateway
     {
         return true;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -268,7 +290,7 @@ class Gateway extends BaseGateway
     {
         return true;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -276,7 +298,7 @@ class Gateway extends BaseGateway
     {
         return true;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -284,20 +306,20 @@ class Gateway extends BaseGateway
     {
         return false;
     }
-    
+
     public function getResponseModel($data): RequestResponseInterface
     {
         return new SAPCheckoutResponse($data);
     }
-    
+
     /*
      * PRIVATE METHODS
      */
-    
+
     /*
      * sets the merchant for requests
      */
-    private function setMerchant()
+    private function setMerchant(): ?AfterpayMerchantAccount
     {
         try {
             $apiEnvironment = $this->sandboxMode ? 'sandbox' : 'production';
@@ -306,7 +328,7 @@ class Gateway extends BaseGateway
             $merchant->setMerchantId(Craft::parseEnv($this->merchantId));
             $merchant->setSecretKey(Craft::parseEnv($this->merchantKey));
             $merchant->setCountryCode($this->region);
-            
+
             return $merchant;
         } catch (\Exception $e) {
             $error = $e->getMessage();
@@ -314,7 +336,68 @@ class Gateway extends BaseGateway
             return null;
         }
     }
-    
+
+    private function checkout(Transaction $transaction, $requestType): RequestResponseInterface
+    {
+        $order = $transaction->order;
+        try {
+            // build checkout data with the transaction
+            $requestData = $this->buildCheckoutRequest($transaction);
+
+            // set the checkout data and merchant
+            $request = new AfterpayCreateCheckoutRequest($requestData);
+            $request->setMerchantAccount($this->_merchant);
+
+            // check if the data is valid
+            if ($request->isValid()) {
+                // send the checkout request and get the token
+                $request->send();
+                $tokenData = $request->getResponse()->getParsedBody();
+
+                // immediately capture payment or authorize with the token
+                if ($requestType === 'authorize') {
+                    $paymentRequest = new AfterpayDeferredPaymentAuthRequest(
+                        ['token' => $tokenData['token']]
+                    );
+                } else {
+                    $paymentRequest = new AfterpayImmediatePaymentCaptureRequest(
+                        ['token' => $tokenData['token']]
+                    );
+                }
+
+                // set the merchant account
+                $paymentRequest->setMerchantAccount($this->_merchant);
+
+                // send the request
+                if ($paymentRequest->send()) {
+                    // get the returned response
+                    $paymentResponse = $paymentRequest->getResponse();
+                    $data = $paymentResponse->getParsedBody();
+
+                    // if not successful then throw
+                    if (!$paymentResponse->isSuccessful()) {
+                        $error = $data;
+                        Craft::warning("[Afterpay] invalid {$error}");
+                        throw new \Exception('Invalid data');
+                    }
+
+                    // else return the response model with the data
+                    return $this->getResponseModel($data);
+                }
+            }
+
+            // error when validating data
+            $errors = $request->getValidationErrors();
+            $errors = Json::encode($errors);
+            Craft::warning("[Afterpay] invalid {$errors}");
+            throw new \Exception('Invalid data');
+        } catch (\Exception $e) {
+            $order->addError('afterpay', 'Error found when trying to submit purchase request');
+
+            return $this->getResponseModel(null);
+        }
+    }
+
     private function buildCheckoutRequest(Transaction $transaction): array
     {
         $order = $transaction->order;
@@ -322,24 +405,24 @@ class Gateway extends BaseGateway
         $billing = $order->billingAddress;
         $shippingMethod = $order->getShippingMethod();
         $lineItems = $order->getLineItems();
-        
+
         $checkoutData = [];
-        
+
         $checkoutData['amount'] = $this->buildCheckoutAmount($order);
         $checkoutData['consumer'] = $this->buildCheckoutConsumer($order);
         $checkoutData['billing'] = $this->buildCheckoutAddress($billing);
         $checkoutData['shipping'] = $this->buildCheckoutAddress($shipping);
-        
+
         //if ($shippingMethod) {
         //    $checkoutData['courier'] = $this->buildCheckoutCourier($shippingMethod);
         //}
-        
+
         $checkoutData['merchantReference'] = $order->id;
         $checkoutData['items'] = $this->buildCheckoutItems($order, $lineItems);
-        
+
         return $checkoutData;
     }
-    
+
     private function buildCheckoutAmount(Order $order): array
     {
         return [
@@ -347,7 +430,7 @@ class Gateway extends BaseGateway
             $order->getPaymentCurrency()
         ];
     }
-    
+
     private function buildCheckoutConsumer(Order $order): array
     {
         $shipping = $order->getShippingAddress();
@@ -359,7 +442,7 @@ class Gateway extends BaseGateway
             'email' => $order->email,
         ];
     }
-    
+
     private function buildCheckoutAddress(Address $address): array
     {
         return [
@@ -373,14 +456,14 @@ class Gateway extends BaseGateway
             'phoneNumber' => $address->phone ?? ''
         ];
     }
-    
+
     //private function buildShippingMethod(ShippingMethod $shippingMethod): array
     //{
     //    return [
     //        'name' =>
     //    ];
     //}
-    
+
     /**
      * @param Order $order
      * @param LineItem[] $items
@@ -391,7 +474,7 @@ class Gateway extends BaseGateway
     private function buildCheckoutItems(Order $order, array $items): array
     {
         $checkoutItems = [];
-        
+
         foreach ($items as $item) {
             $checkoutItems[] += [
                 'name' => $item->getDescription(),
@@ -403,22 +486,22 @@ class Gateway extends BaseGateway
                 ]
             ];
         }
-        
+
         return $checkoutItems;
     }
-    
+
     private function buildFullName(Address $address): string
     {
         $name = '';
-        
+
         if ($address->firstName) {
             $name .= $address->firstName;
         }
-        
+
         if ($address->lastName) {
             $name .= ' ' . $address->firstName;
         }
-        
+
         return $name;
     }
 }
