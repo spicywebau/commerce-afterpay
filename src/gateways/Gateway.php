@@ -373,6 +373,8 @@ class Gateway extends BaseGateway
                     // get the returned response
                     $paymentResponse = $paymentRequest->getResponse();
                     $data = $paymentResponse->getParsedBody();
+                    $statusCode = $paymentResponse->getHttpStatusCode();
+                    $data['statusCode'] = $statusCode;
 
                     // if not successful then throw
                     if (!$paymentResponse->isSuccessful()) {

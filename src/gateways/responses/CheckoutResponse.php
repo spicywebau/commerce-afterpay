@@ -7,10 +7,10 @@ use craft\commerce\base\RequestResponseInterface;
 class CheckoutResponse implements RequestResponseInterface
 {
     protected $data;
-    
+
     // Public Methods
     // =========================================================================
-    
+
     /**
      * Construct the response
      *
@@ -19,87 +19,93 @@ class CheckoutResponse implements RequestResponseInterface
     public function __construct($data) {
         $this->data = $data;
     }
-    
+
     /**
      * @inheritDoc
      */
     public function isSuccessful(): bool
     {
-        // TODO: Implement isSuccessful() method.
+        return $this->data['id'] ?? false;
     }
-    
+
     /**
      * @inheritDoc
      */
     public function isProcessing(): bool
     {
-        // TODO: Implement isProcessing() method.
+        $data = $this->data;
+
+        if ($data === null) {
+            return false;
+        }
+
+        return $data['id'] && ($data['paymentState'] === 'AUTH_APPROVED' || $data['paymentState'] === 'PARTIALLY_CAPTURED');
     }
-    
+
     /**
      * @inheritDoc
      */
     public function isRedirect(): bool
     {
-        // TODO: Implement isRedirect() method.
+        return false;
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getRedirectMethod(): string
     {
-        // TODO: Implement getRedirectMethod() method.
+        return '';
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getRedirectData(): array
     {
-        // TODO: Implement getRedirectData() method.
+        return [];
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getRedirectUrl(): string
     {
-        // TODO: Implement getRedirectUrl() method.
+        return '';
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getTransactionReference(): string
     {
-        // TODO: Implement getTransactionReference() method.
+        return $this->data['id'] ?? '';
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getCode(): string
     {
-        // TODO: Implement getCode() method.
+        return $this->data['statusCode'] ?? '';
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getData()
     {
-        // TODO: Implement getData() method.
+        return $this->data;
     }
-    
+
     /**
      * @inheritDoc
      */
     public function getMessage(): string
     {
-        // TODO: Implement getMessage() method.
+        return '';
     }
-    
+
     /**
      * @inheritDoc
      */
