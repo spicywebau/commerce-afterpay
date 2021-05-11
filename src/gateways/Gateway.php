@@ -418,19 +418,28 @@ class Gateway extends BaseGateway
                 if ($paymentRequest->send()) {
                     // get the returned response
                     $paymentResponse = $paymentRequest->getResponse();
-                    $data = $paymentResponse->getParsedBody();
-                    $statusCode = $paymentResponse->getHttpStatusCode();
-                    $data['statusCode'] = $statusCode;
 
-                    // if not successful then throw
-                    if (!$paymentResponse->isSuccessful()) {
-                        $error = $data;
-                        Craft::warning("[Afterpay] invalid {$error}");
-                        throw new \Exception($error);
+                    if ($paymentRequest->getResponse()->isApproved()) {
+                        $data = $paymentResponse->getParsedBody();
+                        $statusCode = $paymentResponse->getHttpStatusCode();
+                        $data['statusCode'] = $statusCode;
+
+                        // if not successful then throw
+                        if (!$paymentResponse->isSuccessful()) {
+                            $error = $data;
+                            Craft::warning("[Afterpay] invalid {$error}");
+                            throw new \Exception($error);
+                        }
+
+                        // else return the response model with the data
+                        return $this->getResponseModel($data);
                     }
 
-                    // else return the response model with the data
-                    return $this->getResponseModel($data);
+                    return $this->getResponseModel(
+                        [
+                            'message' => 'Payment Unsuccessful, it hasn\'t been approved'
+                        ]
+                    );
                 }
             }
 
