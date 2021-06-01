@@ -101,7 +101,11 @@ class SpicyAfterpayService extends Component
         //if ($shippingMethod) {
         //    $checkoutData['courier'] = $this->buildCheckoutCourier($shippingMethod);
         //}
+        $checkoutData['merchant']['redirectConfirmUrl'] = UrlHelper::actionUrl('commerce/payments/pay');
 
+        if ($order->cancelUrl) {
+            $checkoutData['merchant']['redirectCancelUrl'] = $order->cancelUrl;
+        }
         $checkoutData['merchantReference'] = $order->id;
         $checkoutData['items'] = $this->buildCheckoutItems($order, $lineItems);
 

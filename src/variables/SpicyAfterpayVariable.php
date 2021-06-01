@@ -65,14 +65,14 @@ class SpicyAfterpayVariable
 
             $request = new AfterpayCreateCheckoutRequest($requestData);
             $request->setMerchantAccount($merchant);
-    
+
             // check if the data is valid
             if ($request->isValid()) {
                 // send the checkout request and get the token
                 $request->send();
                 $tokenData = $request->getResponse()->getParsedBody();
 
-                return $tokenData['token'];
+                return $tokenData['token'] ?? null;
             }
         }
 

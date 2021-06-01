@@ -1,8 +1,11 @@
 {% import "_includes/forms" as forms %}
 
-{% if craft.spicyAfterpay.afterpayStatus() %}
+{% set cart = craft.commerce.carts.cart %}
+{% set orderToken = craft.app.request.getParam('orderToken') ?? craft.spicyAfterpay.getNewPaymentToken(cart) ?? null %}
 
+{% if craft.spicyAfterpay.afterpayStatus() and orderToken != null %}
+    <button id="spicy-afterpay" data-sw-afterpay-token="orderToken" data-sw-afterpay-cc="{{ 'AU' }}" disabled>Pay</button>
 {% else %}
-    <p class="sap-error">There was an issue communication with the Afterpay servers. Please try again with another method.</p>
+    <p class="sap-error">There was an issue communication with the Afterpay servers. Please try again later or with another method.</p>
 {% endif %}
 
