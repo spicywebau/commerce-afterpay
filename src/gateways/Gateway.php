@@ -32,6 +32,7 @@ use Afterpay\SDK\HTTP\Request\DeferredPaymentCapture as AfterpayDeferredPaymentC
 use Afterpay\SDK\HTTP\Request\CreateRefund as AfterpayCreateRefundRequest;
 
 use spicyweb\spicyafterpay\SpicyAfterpay;
+use spicyweb\spicyafterpay\SpicyAfterpayAssetBundle;
 use spicyweb\spicyafterpay\gateways\responses\CheckoutResponse as SAPCheckoutResponse;
 use spicyweb\spicyafterpay\gateways\responses\RefundResponse as SAPRefundResponse;
 use spicyweb\spicyafterpay\models\AfterpayPaymentForm;
@@ -102,6 +103,7 @@ class Gateway extends BaseGateway
      */
     public function getPaymentFormHtml(array $params)
     {
+        $url = $this->sandboxMode ? 'https://portal.afterpay.com/afterpay.js' : 'https://portal.sandbox.afterpay.com/afterpay.js';
         $paymentFormModel = $this->getPaymentFormModel();
         $defaults = [
             'gateway' => $this,
@@ -114,6 +116,10 @@ class Gateway extends BaseGateway
         $view = Craft::$app->getView();
 
         $previousMode = $view->getTemplateMode();
+
+        $view->registerJsFile($url);
+        $view->registerAssetBundle(SpicyAfterpayAssetBundle::class);
+
         $view->setTemplateMode(View::TEMPLATE_MODE_CP);
         $html = Craft::$app->getView()->renderTemplate('spicy-afterpay/paymentForm', $params);
 
