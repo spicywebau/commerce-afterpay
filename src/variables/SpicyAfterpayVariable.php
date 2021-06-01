@@ -10,6 +10,8 @@
 
 namespace spicyweb\spicyafterpay\variables;
 
+use Afterpay\SDK\HTTP\Request\CreateCheckout as AfterpayCreateCheckoutRequest;
+use craft\commerce\elements\Order;
 use spicyweb\spicyafterpay\SpicyAfterpay;
 
 use Craft;
@@ -30,7 +32,7 @@ class SpicyAfterpayVariable
 {
     // Public Methods
     // =========================================================================
-    
+
     /**
      * Whatever you want to output to a Twig template can go into a Variable method.
      * You can have as many variable functions as you want.  From any Twig template,
@@ -42,7 +44,7 @@ class SpicyAfterpayVariable
      *
      *     {{ craft.spicyAfterpay.exampleVariable(twigValue) }}
      */
-    
+
     /*
      * return the afterpay api status.
      * true = online
@@ -51,5 +53,29 @@ class SpicyAfterpayVariable
     public function afterpayStatus(): bool
     {
         return SpicyAfterpay::$plugin->spicyAfterpayService->checkAfterpayStatus();
+    }
+
+    public function getNewPaymentToken(Order $order)
+    {
+        $gateway = $order->getGateway();
+        if ($gateway) {
+            $merchant = $gateway->getMerchant();
+
+            $requestData = SpicyAfterpay::$plugin->spicyAfterpayService->buildCheckoutRequest($order);
+
+            $request = new AfterpayCreateCheckoutRequest($requestData);
+            $request->setMerchantAccount($merchant);
+    
+            // check if the data is valid
+            if ($request->isValid()) {
+                // send the checkout request and get the token
+                $request->send();
+                $tokenData = $request->getResponse()->getParsedBody();
+
+                return $tokenData['token'];
+            }
+        }
+
+        return null;
     }
 }

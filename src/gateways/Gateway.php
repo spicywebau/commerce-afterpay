@@ -5,6 +5,7 @@ namespace spicyweb\spicyafterpay\gateways;
 use Craft;
 use craft\commerce\elements\Order;
 use craft\commerce\errors\CurrencyException;
+use craft\commerce\errors\PaymentException;
 use craft\commerce\models\Address;
 use craft\commerce\models\LineItem;
 use craft\commerce\models\ShippingMethod;
@@ -364,6 +365,11 @@ class Gateway extends BaseGateway
         return new SAPRefundResponse($data);
     }
 
+    public function getMerchant()
+    {
+        return $this->_merchant;
+    }
+
     /*
      * PRIVATE METHODS
      */
@@ -393,67 +399,56 @@ class Gateway extends BaseGateway
     {
         $order = $transaction->order;
         try {
-            // build checkout data with the transaction
-            $requestData = $this->buildCheckoutRequest($order);
+            $token = Craft::$app->getRequest()->getParam('orderToken');
+            $status = Craft::$app->getRequest()->getParam('status');
 
-            // set the checkout data and merchant
-            $request = new AfterpayCreateCheckoutRequest($requestData);
-            $request->setMerchantAccount($this->_merchant);
-
-            // check if the data is valid
-            if ($request->isValid()) {
-                // send the checkout request and get the token
-                $request->send();
-                $tokenData = $request->getResponse()->getParsedBody();
-
-                // immediately capture payment or authorize with the token
-                if ($requestType === 'authorize') {
-                    $paymentRequest = new AfterpayDeferredPaymentAuthRequest(
-                        ['token' => $tokenData['token']]
-                    );
-                } else {
-                    $paymentRequest = new AfterpayImmediatePaymentCaptureRequest(
-                        ['token' => $tokenData['token']]
-                    );
-                }
-
-                // set the merchant account
-                $paymentRequest->setMerchantAccount($this->_merchant);
-
-                // send the request
-                if ($paymentRequest->send()) {
-                    // get the returned response
-                    $paymentResponse = $paymentRequest->getResponse();
-
-                    if ($paymentRequest->getResponse()->isApproved()) {
-                        $data = $paymentResponse->getParsedBody();
-                        $statusCode = $paymentResponse->getHttpStatusCode();
-                        $data['statusCode'] = $statusCode;
-
-                        // if not successful then throw
-                        if (!$paymentResponse->isSuccessful()) {
-                            $error = $data;
-                            Craft::warning("[Afterpay] invalid {$error}");
-                            throw new \Exception($error);
-                        }
-
-                        // else return the response model with the data
-                        return $this->getResponseModel($data);
-                    }
-
-                    return $this->getResponseModel(
-                        [
-                            'message' => 'Payment Unsuccessful, it hasn\'t been approved'
-                        ]
-                    );
-                }
+            if ($status !== 'SUCCESS') {
+                throw new PaymentException('Missing payer ID');
             }
 
-            // error when validating data
-            $errors = $request->getValidationErrors();
-            $errors = Json::encode($errors);
-            Craft::warning("[Afterpay] invalid {$errors}");
-            throw new \Exception($errors);
+            // immediately capture payment or authorize with the token
+            if ($requestType === 'authorize') {
+                $paymentRequest = new AfterpayDeferredPaymentAuthRequest(
+                    ['token' => $token]
+                );
+            } else {
+                $paymentRequest = new AfterpayImmediatePaymentCaptureRequest(
+                    ['token' => $token]
+                );
+            }
+
+            // set the merchant account
+            $paymentRequest->setMerchantAccount($this->_merchant);
+
+            // send the request
+            if ($paymentRequest->send()) {
+                // get the returned response
+                $paymentResponse = $paymentRequest->getResponse();
+
+                if ($paymentRequest->getResponse()->isApproved()) {
+                    $data = $paymentResponse->getParsedBody();
+                    $statusCode = $paymentResponse->getHttpStatusCode();
+                    $data['statusCode'] = $statusCode;
+
+                    // if not successful then throw
+                    if (!$paymentResponse->isSuccessful()) {
+                        $error = $data;
+                        Craft::warning("[Afterpay] invalid {$error}");
+                        throw new PaymentException($error);
+                    }
+
+                    // else return the response model with the data
+                    return $this->getResponseModel($data);
+                }
+
+                return $this->getResponseModel(
+                    [
+                        'message' => 'Payment Unsuccessful, it hasn\'t been approved'
+                    ]
+                );
+            }
+
+            throw new PaymentException('Error sending request');
         } catch (\Exception $e) {
             $order->addError('afterpay', 'Error found when trying to submit purchase request');
 
@@ -463,111 +458,5 @@ class Gateway extends BaseGateway
                 ]
             );
         }
-    }
-
-    private function buildCheckoutRequest(Order $order): array
-    {
-        $shipping = $order->shippingAddress;
-        $billing = $order->billingAddress;
-        $shippingMethod = $order->getShippingMethod();
-        $lineItems = $order->getLineItems();
-
-        $checkoutData = [];
-
-        $checkoutData['amount'] = $this->buildCheckoutAmount($order);
-        $checkoutData['consumer'] = $this->buildCheckoutConsumer($order);
-        $checkoutData['billing'] = $this->buildCheckoutAddress($billing);
-        $checkoutData['shipping'] = $this->buildCheckoutAddress($shipping);
-
-        //if ($shippingMethod) {
-        //    $checkoutData['courier'] = $this->buildCheckoutCourier($shippingMethod);
-        //}
-
-        $checkoutData['merchantReference'] = $order->id;
-        $checkoutData['items'] = $this->buildCheckoutItems($order, $lineItems);
-
-        return $checkoutData;
-    }
-
-    private function buildCheckoutAmount(Order $order): array
-    {
-        return [
-            $order->getTotal(),
-            $order->getPaymentCurrency()
-        ];
-    }
-
-    private function buildCheckoutConsumer(Order $order): array
-    {
-        $shipping = $order->getShippingAddress();
-        $billing = $order->getBillingAddress();
-        return [
-            'phoneNumber' => $shipping->phone ?? $billing->phone,
-            'givenNames' => $shipping->firstName ?? $billing->firstName,
-            'surname' => $shipping->lastName ?? $billing->lastName,
-            'email' => $order->email,
-        ];
-    }
-
-    private function buildCheckoutAddress(Address $address): array
-    {
-        return [
-            'name' => $this->buildFullName($address),
-            'line1' => $address->address1 ?? '',
-            'line2' => $address->address2 ?? '',
-            'area1' => $address->city ?? '',
-            'region' => $address->getStateText() ?? '',
-            'postcode' => $address->zipCode ?? '',
-            'countryCode' => $address->countryIso,
-            'phoneNumber' => $address->phone ?? ''
-        ];
-    }
-
-    //private function buildShippingMethod(ShippingMethod $shippingMethod): array
-    //{
-    //    return [
-    //        'name' =>
-    //    ];
-    //}
-
-    /**
-     * @param Order $order
-     * @param LineItem[] $items
-     * @return array
-     * @throws CurrencyException
-     * @throws InvalidConfigException
-     */
-    private function buildCheckoutItems(Order $order, array $items): array
-    {
-        $checkoutItems = [];
-
-        foreach ($items as $item) {
-            $checkoutItems[] += [
-                'name' => $item->getDescription(),
-                'sku' => $item->getSku(),
-                'quantity' => $item->qty,
-                'price' => [
-                    $item->getTotal(),
-                    $order->getPaymentCurrency()
-                ]
-            ];
-        }
-
-        return $checkoutItems;
-    }
-
-    private function buildFullName(Address $address): string
-    {
-        $name = '';
-
-        if ($address->firstName) {
-            $name .= $address->firstName;
-        }
-
-        if ($address->lastName) {
-            $name .= ' ' . $address->firstName;
-        }
-
-        return $name;
     }
 }
