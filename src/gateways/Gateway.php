@@ -394,7 +394,7 @@ class Gateway extends BaseGateway
         $order = $transaction->order;
         try {
             // build checkout data with the transaction
-            $requestData = $this->buildCheckoutRequest($transaction);
+            $requestData = $this->buildCheckoutRequest($order);
 
             // set the checkout data and merchant
             $request = new AfterpayCreateCheckoutRequest($requestData);
@@ -465,9 +465,8 @@ class Gateway extends BaseGateway
         }
     }
 
-    private function buildCheckoutRequest(Transaction $transaction): array
+    private function buildCheckoutRequest(Order $order): array
     {
-        $order = $transaction->order;
         $shipping = $order->shippingAddress;
         $billing = $order->billingAddress;
         $shippingMethod = $order->getShippingMethod();
