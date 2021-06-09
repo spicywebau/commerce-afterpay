@@ -84,7 +84,7 @@ class SpicyAfterpayService extends Component
         }
     }
 
-    public function buildCheckoutRequest(Order $order): array
+    public function buildCheckoutRequest(Order $order, $redirectUrl = null): array
     {
         $shipping = $order->shippingAddress;
         $billing = $order->billingAddress;
@@ -101,7 +101,9 @@ class SpicyAfterpayService extends Component
         //if ($shippingMethod) {
         //    $checkoutData['courier'] = $this->buildCheckoutCourier($shippingMethod);
         //}
-        $checkoutData['merchant']['redirectConfirmUrl'] = UrlHelper::actionUrl('commerce/payments/pay');
+        if ($redirectUrl) {
+            $checkoutData['merchant']['redirectConfirmUrl'] = $redirectUrl;
+        }
 
         if ($order->cancelUrl) {
             $checkoutData['merchant']['redirectCancelUrl'] = $order->cancelUrl;

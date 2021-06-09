@@ -55,13 +55,13 @@ class SpicyAfterpayVariable
         return SpicyAfterpay::$plugin->spicyAfterpayService->checkAfterpayStatus();
     }
 
-    public function getNewPaymentToken(Order $order)
+    public function getNewPaymentToken(Order $order, $url = null)
     {
         $gateway = $order->getGateway();
         if ($gateway) {
             $merchant = $gateway->getMerchant();
 
-            $requestData = SpicyAfterpay::$plugin->spicyAfterpayService->buildCheckoutRequest($order);
+            $requestData = SpicyAfterpay::$plugin->spicyAfterpayService->buildCheckoutRequest($order, $url);
 
             $request = new AfterpayCreateCheckoutRequest($requestData);
             $request->setMerchantAccount($merchant);

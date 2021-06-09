@@ -1,11 +1,33 @@
 {% import "_includes/forms" as forms %}
 
 {% set cart = craft.commerce.carts.cart %}
-{% set orderToken = craft.app.request.getParam('orderToken') ?? craft.spicyAfterpay.getNewPaymentToken(cart) ?? null %}
+{% set currentUrl = craft.app.request.absoluteUrl %}
 
-{% if craft.spicyAfterpay.afterpayStatus() and orderToken != null %}
-    <button id="spicy-afterpay" data-sw-afterpay-token="orderToken" data-sw-afterpay-cc="{{ 'AU' }}" disabled>Pay</button>
+{# get the status of afterpay #}
+{% set isAfterpayUp = craft.spicyAfterpay.afterpayStatus() %}
+
+{# get the order token from the URL or generate one #}
+{% set orderToken = craft.app.request.getParam('orderToken') ?? craft.spicyAfterpay.getNewPaymentToken(cart, currentUrl) ?? null %}
+
+{# get the token status (if returned) #}
+{% set orderTokenStatus = craft.app.request.getParam('status') ?? null %}
+
+{# first check if afterpay is up. if not then return that it is unavaliable #}
+{% if isAfterpayUp %}
+
+    {# if we have the token #}
+    {% if orderToken %}
+        {# if we dont have the orderTokenStatus or if it has a status of cancelled then show the pay button  #}
+        {% if not orderTokenStatus or orderTokenStatus == 'CANCELLED' %}
+            <button id="spicy-afterpay" data-sw-afterpay-token="orderToken" data-sw-afterpay-cc="{{ 'AU' }}" disabled>Pay</button>
+        {% else %}
+            <input type="hidden" value="{{ orderToken }}" name="orderToken">
+            <input type="hidden" value="{{ orderTokenStatus }}" name="orderTokenStatus">
+            <button id="spicy-afterpay-confirm">Confirm</button>
+        {% endif %}
+    {% endif %}
 {% else %}
-    <p class="sap-error">There was an issue communication with the Afterpay servers. Please try again later or with another method.</p>
+    <p class="sap-error">There was an issue communication with the Afterpay servers. Please try
+        again later or with another method.</p>
 {% endif %}
 
