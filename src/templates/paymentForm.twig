@@ -20,7 +20,7 @@
         {# if we dont have the orderTokenStatus or if it has a status of cancelled then show the pay button #}
         {% if not orderTokenStatus or orderTokenStatus == 'CANCELLED' %}
             <button id="spicy-afterpay" data-sw-afterpay-token="orderToken"
-                    data-sw-afterpay-cc="{{ 'AU' }}" disabled>Pay
+                    data-sw-afterpay-cc="{{ gateway.region }}" disabled>Pay
             </button>
         {% else %}
             <input type="hidden" value="{{ orderToken }}" name="orderToken">
