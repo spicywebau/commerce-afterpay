@@ -17,9 +17,11 @@
 
     {# if we have the token #}
     {% if orderToken %}
-        {# if we dont have the orderTokenStatus or if it has a status of cancelled then show the pay button  #}
+        {# if we dont have the orderTokenStatus or if it has a status of cancelled then show the pay button #}
         {% if not orderTokenStatus or orderTokenStatus == 'CANCELLED' %}
-            <button id="spicy-afterpay" data-sw-afterpay-token="orderToken" data-sw-afterpay-cc="{{ 'AU' }}" disabled>Pay</button>
+            <button id="spicy-afterpay" data-sw-afterpay-token="orderToken"
+                    data-sw-afterpay-cc="{{ 'AU' }}" disabled>Pay
+            </button>
         {% else %}
             <input type="hidden" value="{{ orderToken }}" name="orderToken">
             <input type="hidden" value="{{ orderTokenStatus }}" name="orderTokenStatus">
@@ -27,7 +29,7 @@
         {% endif %}
     {% endif %}
 {% else %}
-    <p class="sap-error">There was an issue communication with the Afterpay servers. Please try
-        again later or with another method.</p>
+    {# if there was an error with afterpay #}
+    <p class="sap-error">There was an issue communication with the Afterpay servers. Please try again later or with another method.</p>
 {% endif %}
 
