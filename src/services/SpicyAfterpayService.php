@@ -38,6 +38,7 @@ use yii\base\InvalidConfigException;
  */
 class SpicyAfterpayService extends Component
 {
+    public $regionDollar;
     // Public Methods
     // =========================================================================
 
@@ -78,17 +79,22 @@ class SpicyAfterpayService extends Component
             $code = $e->getCode();
             $error = $e->getMessage();
 
-            Craft::warning("[AFTERPAY] {$code} ");
-            Craft::warning("[AFTERPAY] {$error} ");
+            Craft::warning("[AFTERPAY] {$code} ", 'afterpay');
+            Craft::warning("[AFTERPAY] {$error} ", 'afterpay');
             return false;
         }
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function buildCheckoutRequest(Order $order, $redirectUrl = null): array
     {
+        $this->regionDollar = $order->getGateway()->regionDollar;
+
         $shipping = $order->shippingAddress;
         $billing = $order->billingAddress;
-        // $shippingMethod = $order->getShippingMethod();
+        $shippingCost = $order->getTotalShippingCost();
         $lineItems = $order->getLineItems();
 
         $checkoutData = [];
@@ -101,24 +107,34 @@ class SpicyAfterpayService extends Component
         //if ($shippingMethod) {
         //    $checkoutData['courier'] = $this->buildCheckoutCourier($shippingMethod);
         //}
+
+        if ($shippingCost > 0) {
+            $checkoutData['shippingAmount'] = [
+                'amount' => $shippingCost,
+                'currency' => $this->regionDollar
+            ];
+        }
+
         if ($redirectUrl) {
             $checkoutData['merchant']['redirectConfirmUrl'] = $redirectUrl;
+            $checkoutData['merchant']['redirectCancelUrl'] = $redirectUrl;
         }
 
-        if ($order->cancelUrl) {
-            $checkoutData['merchant']['redirectCancelUrl'] = $order->cancelUrl;
-        }
-        $checkoutData['merchantReference'] = $order->id;
+        $checkoutData['merchantReference'] = (string)$order->id;
         $checkoutData['items'] = $this->buildCheckoutItems($order, $lineItems);
 
+        // echo '<pre>';
+        // var_dump($checkoutData);
+        // echo '</pre>';
+        // die();
         return $checkoutData;
     }
 
     private function buildCheckoutAmount(Order $order): array
     {
         return [
-            $order->getTotal(),
-            $order->getPaymentCurrency()
+            'amount' => $order->getTotal(),
+            'currency' => $this->regionDollar
         ];
     }
 
@@ -127,9 +143,9 @@ class SpicyAfterpayService extends Component
         $shipping = $order->getShippingAddress();
         $billing = $order->getBillingAddress();
         return [
-            'phoneNumber' => $shipping->phone ?? $billing->phone,
-            'givenNames' => $shipping->firstName ?? $billing->firstName,
-            'surname' => $shipping->lastName ?? $billing->lastName,
+            'phoneNumber' => $shipping->phone ?? $billing->phone ?? '',
+            'givenNames' => $shipping->firstName ?? $billing->firstName ?? '',
+            'surname' => $shipping->lastName ?? $billing->lastName ?? '',
             'email' => $order->email,
         ];
     }
@@ -159,21 +175,19 @@ class SpicyAfterpayService extends Component
      * @param Order $order
      * @param LineItem[] $items
      * @return array
-     * @throws CurrencyException
-     * @throws InvalidConfigException
      */
     private function buildCheckoutItems(Order $order, array $items): array
     {
         $checkoutItems = [];
 
         foreach ($items as $item) {
-            $checkoutItems[] += [
+            $checkoutItems[] = [
                 'name' => $item->getDescription(),
                 'sku' => $item->getSku(),
                 'quantity' => $item->qty,
                 'price' => [
                     $item->getTotal(),
-                    $order->getPaymentCurrency()
+                    $this->regionDollar
                 ]
             ];
         }

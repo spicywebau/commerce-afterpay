@@ -15,6 +15,7 @@ use craft\commerce\elements\Order;
 use spicyweb\spicyafterpay\SpicyAfterpay;
 
 use Craft;
+use yii\helpers\Json;
 
 /**
  * Spicy Afterpay Variable
@@ -58,6 +59,7 @@ class SpicyAfterpayVariable
     public function getNewPaymentToken(Order $order, $url = null)
     {
         $gateway = $order->getGateway();
+
         if ($gateway) {
             $merchant = $gateway->getMerchant();
 
@@ -67,12 +69,23 @@ class SpicyAfterpayVariable
             $request->setMerchantAccount($merchant);
 
             // check if the data is valid
+            // var_dump(json_encode($requestData));
+            // die();
             if ($request->isValid()) {
                 // send the checkout request and get the token
                 $request->send();
                 $tokenData = $request->getResponse()->getParsedBody();
 
-                return $tokenData['token'] ?? null;
+                return $tokenData->token ?? null;
+            }
+
+            if (Craft::$app->config->general->devMode) {
+                echo '<pre>';
+                echo $request->getValidationErrorsAsHtml();
+                echo '</pre>';
+            } else {
+                $encodedErrors = Json::encode($request->getValidationErrors());
+                Craft::warning($encodedErrors, 'afterpay');
             }
         }
 

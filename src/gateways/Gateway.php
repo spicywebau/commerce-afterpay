@@ -68,6 +68,8 @@ class Gateway extends BaseGateway
      */
     public $region;
 
+    public $regionDollar;
+
     /*
      * Private Properties
      */
@@ -81,6 +83,18 @@ class Gateway extends BaseGateway
         parent::init();
 
         $this->_merchant = $this->setMerchant();
+
+        switch ($this->region) {
+            case 'AU':
+                $this->regionDollar = 'AUD';
+                break;
+            case 'NZ':
+                $this->regionDollar = 'NZD';
+                break;
+            case 'US':
+                $this->regionDollar = 'USD';
+                break;
+        }
     }
 
     /**
@@ -104,7 +118,7 @@ class Gateway extends BaseGateway
      */
     public function getPaymentFormHtml(array $params)
     {
-        $url = $this->sandboxMode ? 'https://portal.afterpay.com/afterpay.js' : 'https://portal.sandbox.afterpay.com/afterpay.js';
+        $url = $this->sandboxMode ? 'https://portal.sandbox.afterpay.com/afterpay.js' : 'https://portal.afterpay.com/afterpay.js';
         $paymentFormModel = $this->getPaymentFormModel();
         $defaults = [
             'gateway' => $this,
