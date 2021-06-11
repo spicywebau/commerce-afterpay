@@ -2,10 +2,12 @@
 namespace spicyweb\spicyafterpay\models;
 
 use craft\commerce\models\PaymentSource;
-use craft\commerce\models\payments\CreditCardPaymentForm;
+use craft\commerce\models\payments\OffsitePaymentForm;
 
-class AfterpayPaymentForm extends CreditCardPaymentForm
+class AfterpayPaymentForm extends OffsitePaymentForm
 {
+    public $token;
+
     /**
      * @param PaymentSource $paymentSource
      */
@@ -13,18 +15,18 @@ class AfterpayPaymentForm extends CreditCardPaymentForm
     {
         $this->token = $paymentSource->id;
     }
-    
+
     /**
      * @inheritdoc
      */
     public function defineRules(): array
     {
         $rules = parent::defineRules();
-        
+
         if ($this->token) {
             return []; //No validation of form if using a token
         }
-        
+
         return $rules;
     }
 }

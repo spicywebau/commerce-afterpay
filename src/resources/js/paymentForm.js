@@ -5,7 +5,8 @@ function initAfterPay() {
     let countryCode = btn.getAttribute('data-sw-afterpay-cc');
     let token = btn.getAttribute('data-sw-afterpay-token');
 
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
       AfterPay.initialize({countryCode: countryCode});
       // AfterPay.open();
 
@@ -20,8 +21,10 @@ function initAfterPay() {
       //     // The token is now ready to be captured from your server backend.
       //   } else {
       //     // The consumer cancelled the payment or closed the popup window.
+      //     AfterPay.close();
       //   }
       // }
+      //
       // AfterPay.transfer({token: token});
 
       AfterPay.redirect({token: token});

@@ -4,11 +4,7 @@ namespace spicyweb\spicyafterpay\gateways;
 
 use Craft;
 use craft\commerce\elements\Order;
-use craft\commerce\errors\CurrencyException;
 use craft\commerce\errors\PaymentException;
-use craft\commerce\models\Address;
-use craft\commerce\models\LineItem;
-use craft\commerce\models\ShippingMethod;
 use craft\commerce\Plugin as CommercePlugin;
 use craft\commerce\base\Gateway as BaseGateway;
 use craft\commerce\base\RequestResponseInterface;
@@ -16,9 +12,8 @@ use craft\commerce\models\payments\BasePaymentForm;
 use craft\commerce\models\PaymentSource;
 use craft\commerce\models\Transaction;
 
-//use craft\helpers\App;
-//use craft\helpers\StringHelper;
 use craft\helpers\Json;
+use craft\helpers\Template;
 use craft\web\Response as WebResponse;
 use craft\web\View;
 
@@ -36,7 +31,9 @@ use spicyweb\spicyafterpay\SpicyAfterpay;
 use spicyweb\spicyafterpay\SpicyAfterpayAssetBundle;
 use spicyweb\spicyafterpay\gateways\responses\CheckoutResponse as SAPCheckoutResponse;
 use spicyweb\spicyafterpay\gateways\responses\RefundResponse as SAPRefundResponse;
-use spicyweb\spicyafterpay\models\AfterpayPaymentForm;
+// use spicyweb\spicyafterpay\models\AfterpayPaymentForm;
+
+use craft\commerce\models\payments\OffsitePaymentForm;
 
 //use Throwable;
 //use yii\base\Exception;
@@ -140,7 +137,7 @@ class Gateway extends BaseGateway
 
         $view->setTemplateMode($previousMode);
 
-        return $html;
+        return Template::raw($html);
     }
 
     /**
@@ -236,7 +233,7 @@ class Gateway extends BaseGateway
      */
     public function getPaymentFormModel(): BasePaymentForm
     {
-        return new AfterpayPaymentForm();
+        return new OffsitePaymentForm();
     }
 
     /**
@@ -413,8 +410,8 @@ class Gateway extends BaseGateway
     {
         $order = $transaction->order;
         try {
-            $token = Craft::$app->getRequest()->getParam('orderToken');
-            $status = Craft::$app->getRequest()->getParam('status');
+            $token = Craft::$app->getRequest()->getBodyParam('orderToken');
+            $status = Craft::$app->getRequest()->getBodyParam('status');
 
             if ($status !== 'SUCCESS') {
                 throw new PaymentException('Missing payer ID');
@@ -440,7 +437,7 @@ class Gateway extends BaseGateway
                 $paymentResponse = $paymentRequest->getResponse();
 
                 if ($paymentRequest->getResponse()->isApproved()) {
-                    $data = $paymentResponse->getParsedBody();
+                    $data = Json::decode($paymentResponse->getRawBody());
                     $statusCode = $paymentResponse->getHttpStatusCode();
                     $data['statusCode'] = $statusCode;
 

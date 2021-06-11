@@ -25,9 +25,9 @@
         {% if not orderTokenStatus or orderTokenStatus == 'CANCELLED' %}
             <button id="spicy-afterpay" data-sw-afterpay-token="{{ orderToken }}" data-sw-afterpay-cc="{{ gateway.region }}" disabled>Pay</button>
         {% else %}
-            <input type="hidden" value="{{ orderToken }}" name="orderToken">
-            <input type="hidden" value="{{ orderTokenStatus }}" name="orderTokenStatus">
-            <button id="spicy-afterpay-confirm">Confirm</button>
+            <input type="hidden" name="orderToken" value="{{ orderToken }}">
+            <input type="hidden" name="status" value="{{ orderTokenStatus }}">
+            <button id="spicy-afterpay-confirm">Confirm Payment</button>
         {% endif %}
     {% else %}
         {{ errorContent }}
