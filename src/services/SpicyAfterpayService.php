@@ -120,7 +120,7 @@ class SpicyAfterpayService extends Component
             $checkoutData['merchant']['redirectCancelUrl'] = $redirectUrl;
         }
 
-        $checkoutData['merchantReference'] = (string)$order->shortNumber;
+        $checkoutData['merchantReference'] = $order->shortNumber;
         $checkoutData['items'] = $this->buildCheckoutItems($order, $lineItems);
 
         // echo '<pre>';

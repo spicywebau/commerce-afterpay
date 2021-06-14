@@ -183,12 +183,12 @@ class Gateway extends BaseGateway
             $capturePaymentRequest->setMerchantAccount($this->_merchant);
 
             if ($capturePaymentRequest->send()) {
-                $paymentEvent = $capturePaymentRequest->getResponse()->getParsedBody();
+                $paymentEvent = Json::decode($capturePaymentRequest->getResponse()->getRawBody());
 
                 return $this->getResponseModel($paymentEvent);
             }
 
-            $error = $capturePaymentRequest->getResponse()->getParsedBody();
+            $error = Json::decode($capturePaymentRequest->getResponse()->getRawBody());
 
             throw new \Exception($error);
         } catch (\Exception $e) {
@@ -261,7 +261,7 @@ class Gateway extends BaseGateway
             [
                 'amount' => [
                     'amount' => $transaction->paymentAmount,
-                    'currency' => $transaction->paymentCurrency
+                    'currency' => $this->regionDollar
                 ]
             ]
         );
@@ -271,9 +271,9 @@ class Gateway extends BaseGateway
             $refundRequest->setOrderId($parentTransaction->reference);
 
             if ($refundRequest->send()) {
-                $refund = $refundRequest->getResponse()->getParsedBody();
+                $refund = Json::decode($refundRequest->getResponse()->getRawBody());
                 $refund['statusCode'] = $refundRequest->getResponse()->getHttpStatusCode();
-                $this->getRefundResponseModel($refund);
+                return $this->getRefundResponseModel($refund);
             }
 
             $error = ['Can\'t create a refund for a declined order.'];
