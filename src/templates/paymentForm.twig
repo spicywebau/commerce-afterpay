@@ -11,10 +11,11 @@
 
 {# get the token status (if returned) #}
 {% set orderTokenStatus = craft.app.request.getParam('status') ?? null %}
-
+{% set isCancelled = orderTokenStatus == 'CANCELLED' %}
 {% set errorContent %}
     {# if there was an error with afterpay #}
-    <p class="sap-error">There was an issue communication with the Afterpay servers. Please try again later or with another method.</p>
+    <p class="sap-error">There was an issue communication with the Afterpay servers. Please try
+        again later or with another method.</p>
 {% endset %}
 
 {# first check if afterpay is up. if not then return that it is unavaliable #}
@@ -22,8 +23,13 @@
     {# if we have the token #}
     {% if orderToken %}
         {# if we dont have the orderTokenStatus or if it has a status of cancelled then show the pay button #}
-        {% if not orderTokenStatus or orderTokenStatus == 'CANCELLED' %}
-            <button id="spicy-afterpay" data-sw-afterpay-token="{{ orderToken }}" data-sw-afterpay-cc="{{ gateway.region }}" disabled>Pay</button>
+        {% if not orderTokenStatus or isCancelled %}
+            {# {% if isCancelled %} #}
+            {# <p>You have cancelled the payment at afterpay, click pay below to try again.</p> #}
+            {# {% endif %} #}
+            <button id="spicy-afterpay" data-sw-afterpay-token="{{ orderToken }}"
+                    data-sw-afterpay-cc="{{ gateway.region }}" disabled>Pay
+            </button>
         {% else %}
             <input type="hidden" name="orderToken" value="{{ orderToken }}">
             <input type="hidden" name="status" value="{{ orderTokenStatus }}">
