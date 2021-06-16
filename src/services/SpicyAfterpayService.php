@@ -96,6 +96,7 @@ class SpicyAfterpayService extends Component
         $billing = $order->billingAddress;
         $shippingCost = $order->getTotalShippingCost();
         $lineItems = $order->getLineItems();
+        $discounts = $order->getTotalDiscount();
 
         $checkoutData = [];
 
@@ -112,6 +113,16 @@ class SpicyAfterpayService extends Component
             $checkoutData['shippingAmount'] = [
                 'amount' => $shippingCost,
                 'currency' => $this->regionDollar
+            ];
+        }
+
+        if ($discounts > 0) {
+            $checkoutData['shippingAmount'] = [
+                'displayName' => 'Total Discount Amount',
+                'amount' => [
+                    'amount' => $shippingCost,
+                    'currency' => $this->regionDollar
+                ]
             ];
         }
 

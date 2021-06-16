@@ -454,7 +454,7 @@ class Gateway extends BaseGateway
 
                 return $this->getResponseModel(
                     [
-                        'message' => 'Payment Unsuccessful, it hasn\'t been approved'
+                        'message' => 'Payment Unsuccessful. Please try again (and make sure all the details is correct).'
                     ]
                 );
             }

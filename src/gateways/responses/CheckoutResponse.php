@@ -39,7 +39,7 @@ class CheckoutResponse implements RequestResponseInterface
             return false;
         }
 
-        return ($data['id'] && ($data['paymentState'] === 'AUTH_APPROVED' || $data['paymentState'] === 'PARTIALLY_CAPTURED')) ?? false;
+        return (isset($data['id'], $data['paymentState']) && ($data['paymentState'] === 'AUTH_APPROVED' || $data['paymentState'] === 'PARTIALLY_CAPTURED')) ?? false;
     }
 
     /**

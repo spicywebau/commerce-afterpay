@@ -23,7 +23,7 @@
     {# if we have the token #}
     {% if orderToken %}
         {# if we dont have the orderTokenStatus or if it has a status of cancelled then show the pay button #}
-        {% if not orderTokenStatus or isCancelled %}
+        {% if not orderTokenStatus or isCancelled or craft.app.session.getFlash('error') %}
             {# {% if isCancelled %} #}
             {# <p>You have cancelled the payment at afterpay, click pay below to try again.</p> #}
             {# {% endif %} #}
