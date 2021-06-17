@@ -1,11 +1,11 @@
 <?php
 /**
- * Spicy Afterpay plugin for Craft CMS 3.x
+ * Afterpay plugin for Craft CMS ^3.4.0
  *
- * Afterpay gateway for craft commerce
+ * Afterpay gateway for Craft Commerce
  *
  * @link      https://github.com/spicywebau
- * @copyright Copyright (c) 2020 Spicy Web
+ * @copyright Copyright (c) 2021 Spicy Web
  */
 
 namespace spicyweb\spicyafterpay;
@@ -50,7 +50,7 @@ class SpicyAfterpay extends Plugin
 {
     // Static Properties
     // =========================================================================
-    
+
     /**
      * Static property that is an instance of this plugin class so that it can be accessed via
      * SpicyAfterpay::$plugin
@@ -58,34 +58,34 @@ class SpicyAfterpay extends Plugin
      * @var SpicyAfterpay
      */
     public static $plugin;
-    
+
     // Public Properties
     // =========================================================================
-    
+
     /**
      * To execute your plugin’s migrations, you’ll need to increase its schema version.
      *
      * @var string
      */
     public $schemaVersion = '0.1.0';
-    
+
     /**
      * Set to `true` if the plugin should have a settings view in the control panel.
      *
      * @var bool
      */
     public $hasCpSettings = false;
-    
+
     /**
      * Set to `true` if the plugin should have its own section (main nav item) in the control panel.
      *
      * @var bool
      */
     public $hasCpSection = false;
-    
+
     // Public Methods
     // =========================================================================
-    
+
     /**
      * Set our $plugin static property to this class so that it can be accessed via
      * SpicyAfterpay::$plugin
@@ -101,10 +101,10 @@ class SpicyAfterpay extends Plugin
     {
         parent::init();
         self::$plugin = $this;
-        
+
         // Add in our Twig extensions
         // Craft::$app->view->registerTwigExtension(new SpicyAfterpayTwigExtension());
-        
+
         // Register our site routes
         //Event::on(
         //    UrlManager::class,
@@ -114,7 +114,7 @@ class SpicyAfterpay extends Plugin
         //        $event->rules['get-afterpay-token'] = 'spicy-afterpay/default/get-token';
         //    }
         //);
-        
+
         // Register our CP routes
         // Event::on(
         //     UrlManager::class,
@@ -123,7 +123,7 @@ class SpicyAfterpay extends Plugin
         //         $event->rules['get-afterpay-token'] = 'spicy-afterpay/default/get-token';
         //     }
         // );
-        
+
          //Register our variables
          Event::on(
              CraftVariable::class,
@@ -134,7 +134,7 @@ class SpicyAfterpay extends Plugin
                  $variable->set('spicyAfterpay', SpicyAfterpayVariable::class);
              }
          );
-        
+
         // Do something after we're installed
         // Event::on(
         //     Plugins::class,
@@ -145,7 +145,7 @@ class SpicyAfterpay extends Plugin
         //         }
         //     }
         // );
-        
+
         /**
          * Logging in Craft involves using one of the following methods:
          *
@@ -172,15 +172,15 @@ class SpicyAfterpay extends Plugin
             ),
             __METHOD__
         );
-    
+
         Event::on(Gateways::class, Gateways::EVENT_REGISTER_GATEWAY_TYPES,  function(RegisterComponentTypesEvent $event) {
             $event->types[] = Gateway::class;
         });
     }
-    
+
     // Protected Methods
     // =========================================================================
-    
+
     /**
      * Creates and returns the model used to store the plugin’s settings.
      *
@@ -190,7 +190,7 @@ class SpicyAfterpay extends Plugin
     // {
     //     return new Settings();
     // }
-    
+
     /**
      * Returns the rendered settings HTML, which will be inserted into the content
      * block on the settings page.

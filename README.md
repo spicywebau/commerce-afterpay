@@ -1,43 +1,48 @@
-# Spicy Afterpay plugin for Craft CMS 3.x
+# Afterpay plugin for Craft Commerce 3.x
 
 Afterpay gateway for craft commerce
 
 ![Screenshot](resources/img/plugin-logo.png)
 
+## Overview
+
+A Craft CMS plugin adds Afterpay as a gateway for Craft Commerce.
+
+Supports
+- Purchase or Manual payment type.
+- Refunds, full and partial.
+
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0-beta.23 or later.
+This plugin requires: 
+- Craft CMS 3.4.0 or later.
+- Craft Commerce 3.0.0 or later.
 
 ## Installation
 
-To install the plugin, follow these instructions.
+This plugin can be installed from the [Craft Plugin Store](https://plugins.craftcms.com/) or with [Composer](https://packagist.org/).
 
-1. Open your terminal and go to your Craft project:
+### Craft Plugin Store
+Open your Craft project's control panel, navigate to the Plugin Store, search for Afterpay and click Install.
 
-        cd /path/to/project
+### Composer
+Open your terminal, navigate to your Craft project's root directory and run the following command:
+```
+composer require spicyweb/craft-afterpay
+```
+Then open your project's control panel, navigate to Settings &rarr; Plugins, find Afterpay and click Install.
 
-2. Then tell Composer to load the plugin:
-
-        composer require https://github.com/spicywebau/craft-spicy-afterpay/spicy-afterpay
-
-3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Spicy Afterpay.
-
-## Spicy Afterpay Overview
-
--Insert text here-
-
-## Configuring Spicy Afterpay
+## Configuration
 
 -Insert text here-
 
-## Using Spicy Afterpay
+## Using the plugin
 
 -Insert text here-
 
-## Spicy Afterpay Roadmap
+## Roadmap
 
-Some things to do, and ideas for potential features:
 
-* Release it
+---
 
-Brought to you by [Spicy Web](https://github.com/spicywebau)
+*Created and maintained by [Spicy Web](https://spicyweb.com.au)*
