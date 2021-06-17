@@ -1,5 +1,5 @@
 {
-	"name": "spicyweb/spicy-afterpay",
+	"name": "spicyweb/craft-afterpay",
 	"description": "Afterpay gateway for craft commerce",
 	"type": "craft-plugin",
 	"version": "0.1.1",
@@ -11,8 +11,8 @@
 		"spicy afterpay"
 	],
 	"support": {
-		"docs": "https://github.com/https://github.com/spicywebau/craft-spicy-afterpay/spicy-afterpay/blob/master/README.md",
-		"issues": "https://github.com/https://github.com/spicywebau/craft-spicy-afterpay/spicy-afterpay/issues"
+		"docs": "https://github.com/spicywebau/craft-afterpay/blob/master/README.md",
+		"issues": "https://github.com/spicywebau/craft-afterpay/issues"
 	},
 	"license": "MIT",
 	"authors": [
