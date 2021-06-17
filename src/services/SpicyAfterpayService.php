@@ -10,17 +10,17 @@
 
 namespace spicyweb\spicyafterpay\services;
 
-use Afterpay\SDK\HTTP\Request\Ping as AfterpayPingRequest;
-use craft\commerce\errors\CurrencyException;
-use craft\commerce\models\Address;
-use craft\commerce\models\LineItem;
-use craft\helpers\UrlHelper;
-use spicyweb\spicyafterpay\SpicyAfterpay;
-
 use Craft;
 use craft\base\Component;
 use craft\commerce\elements\Order;
-use craft\commerce\Plugin as Commerce;
+// use craft\commerce\Plugin as Commerce;
+use craft\commerce\models\Address;
+use craft\commerce\models\LineItem;
+
+// use spicyweb\spicyafterpay\SpicyAfterpay;
+
+use Afterpay\SDK\HTTP\Request\Ping as AfterpayPingRequest;
+
 use yii\base\InvalidConfigException;
 
 /**
@@ -105,10 +105,6 @@ class SpicyAfterpayService extends Component
         $checkoutData['billing'] = $this->buildCheckoutAddress($billing);
         $checkoutData['shipping'] = $this->buildCheckoutAddress($shipping);
 
-        //if ($shippingMethod) {
-        //    $checkoutData['courier'] = $this->buildCheckoutCourier($shippingMethod);
-        //}
-
         if ($shippingCost > 0) {
             $checkoutData['shippingAmount'] = [
                 'amount' => $shippingCost,
@@ -134,10 +130,6 @@ class SpicyAfterpayService extends Component
         $checkoutData['merchantReference'] = $order->shortNumber;
         $checkoutData['items'] = $this->buildCheckoutItems($order, $lineItems);
 
-        // echo '<pre>';
-        // var_dump($checkoutData);
-        // echo '</pre>';
-        // die();
         return $checkoutData;
     }
 
@@ -174,13 +166,6 @@ class SpicyAfterpayService extends Component
             'phoneNumber' => $address->phone ?? ''
         ];
     }
-
-    //private function buildShippingMethod(ShippingMethod $shippingMethod): array
-    //{
-    //    return [
-    //        'name' =>
-    //    ];
-    //}
 
     /**
      * @param Order $order

@@ -69,8 +69,6 @@ class SpicyAfterpayVariable
             $request->setMerchantAccount($merchant);
 
             // check if the data is valid
-            // var_dump(json_encode($requestData));
-            // die();
             if ($request->isValid()) {
                 // send the checkout request and get the token
                 $request->send();
@@ -79,6 +77,7 @@ class SpicyAfterpayVariable
                 return $tokenData->token ?? null;
             }
 
+            // display the errors from Afterpay request
             if (Craft::$app->config->general->devMode) {
                 echo '<pre>';
                 echo $request->getValidationErrorsAsHtml();

@@ -102,28 +102,6 @@ class SpicyAfterpay extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        // Add in our Twig extensions
-        // Craft::$app->view->registerTwigExtension(new SpicyAfterpayTwigExtension());
-
-        // Register our site routes
-        //Event::on(
-        //    UrlManager::class,
-        //    UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-        //    function (RegisterUrlRulesEvent $event) {
-        //        // ../get-afterpay-token
-        //        $event->rules['get-afterpay-token'] = 'spicy-afterpay/default/get-token';
-        //    }
-        //);
-
-        // Register our CP routes
-        // Event::on(
-        //     UrlManager::class,
-        //     UrlManager::EVENT_REGISTER_CP_URL_RULES,
-        //     function (RegisterUrlRulesEvent $event) {
-        //         $event->rules['get-afterpay-token'] = 'spicy-afterpay/default/get-token';
-        //     }
-        // );
-
          //Register our variables
          Event::on(
              CraftVariable::class,
@@ -134,17 +112,6 @@ class SpicyAfterpay extends Plugin
                  $variable->set('spicyAfterpay', SpicyAfterpayVariable::class);
              }
          );
-
-        // Do something after we're installed
-        // Event::on(
-        //     Plugins::class,
-        //     Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-        //     function (PluginEvent $event) {
-        //         if ($event->plugin === $this) {
-        //             // We were just installed
-        //         }
-        //     }
-        // );
 
         /**
          * Logging in Craft involves using one of the following methods:
@@ -177,33 +144,4 @@ class SpicyAfterpay extends Plugin
             $event->types[] = Gateway::class;
         });
     }
-
-    // Protected Methods
-    // =========================================================================
-
-    /**
-     * Creates and returns the model used to store the plugin’s settings.
-     *
-     * @return \craft\base\Model|null
-     */
-    // protected function createSettingsModel()
-    // {
-    //     return new Settings();
-    // }
-
-    /**
-     * Returns the rendered settings HTML, which will be inserted into the content
-     * block on the settings page.
-     *
-     * @return string The rendered settings HTML
-     */
-    // protected function settingsHtml(): string
-    // {
-    //     return Craft::$app->view->renderTemplate(
-    //         'spicy-afterpay/settings',
-    //         [
-    //             'settings' => $this->getSettings()
-    //         ]
-    //     );
-    // }
 }

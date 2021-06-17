@@ -3,7 +3,6 @@
 namespace spicyweb\spicyafterpay\gateways;
 
 use Craft;
-use craft\commerce\elements\Order;
 use craft\commerce\errors\PaymentException;
 use craft\commerce\Plugin as CommercePlugin;
 use craft\commerce\base\Gateway as BaseGateway;
@@ -18,27 +17,19 @@ use craft\web\Response as WebResponse;
 use craft\web\View;
 
 use Afterpay\SDK\MerchantAccount as AfterpayMerchantAccount;
-use Afterpay\SDK\HTTP\Request\CreateCheckout as AfterpayCreateCheckoutRequest;
 use Afterpay\SDK\HTTP\Request\ImmediatePaymentCapture as AfterpayImmediatePaymentCaptureRequest;
 use Afterpay\SDK\HTTP\Request\DeferredPaymentAuth as AfterpayDeferredPaymentAuthRequest;
 use Afterpay\SDK\Helper\StringHelper as AfterpayStringHelper;
 
-// use Afterpay\SDK\Model\Payment as AfterpayPayment;
 use Afterpay\SDK\HTTP\Request\DeferredPaymentCapture as AfterpayDeferredPaymentCaptureRequest;
 use Afterpay\SDK\HTTP\Request\CreateRefund as AfterpayCreateRefundRequest;
 
-use spicyweb\spicyafterpay\SpicyAfterpay;
+// use spicyweb\spicyafterpay\SpicyAfterpay;
 use spicyweb\spicyafterpay\SpicyAfterpayAssetBundle;
 use spicyweb\spicyafterpay\gateways\responses\CheckoutResponse as SAPCheckoutResponse;
 use spicyweb\spicyafterpay\gateways\responses\RefundResponse as SAPRefundResponse;
-// use spicyweb\spicyafterpay\models\AfterpayPaymentForm;
 
 use craft\commerce\models\payments\OffsitePaymentForm;
-
-//use Throwable;
-//use yii\base\Exception;
-use yii\base\InvalidConfigException;
-use yii\base\NotSupportedException;
 
 class Gateway extends BaseGateway
 {

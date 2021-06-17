@@ -21,5 +21,5 @@
  * @since     0.1.0
  */
 return [
-    'Spicy Afterpay plugin loaded' => 'Spicy Afterpay plugin loaded',
+    'Afterpay plugin loaded' => 'Afterpay plugin loaded',
 ];
