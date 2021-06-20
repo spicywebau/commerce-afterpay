@@ -1,7 +1,7 @@
 {% import "_includes/forms" as forms %}
 
 {% set cart = craft.commerce.carts.cart %}
-{% set currentUrl = craft.app.request.absoluteUrl %}
+{% set currentUrl = siteUrl(craft.app.request.getFullPath()) %}
 
 {# get the status of afterpay #}
 {% set isAfterpayUp = craft.spicyAfterpay.afterpayStatus() %}
@@ -12,6 +12,7 @@
 {# get the token status (if returned) #}
 {% set orderTokenStatus = craft.app.request.getParam('status') ?? null %}
 {% set isCancelled = orderTokenStatus == 'CANCELLED' %}
+{% set hasFlashError = craft.app.session.getFlash('error') %}
 {% set errorContent %}
     {# if there was an error with afterpay #}
     <p class="sap-error">There was an issue communication with the Afterpay servers. Please try
@@ -23,10 +24,13 @@
     {# if we have the token #}
     {% if orderToken %}
         {# if we dont have the orderTokenStatus or if it has a status of cancelled then show the pay button #}
-        {% if not orderTokenStatus or isCancelled or craft.app.session.getFlash('error') %}
+        {% if not orderTokenStatus or isCancelled or hasFlashError %}
             {# {% if isCancelled %} #}
             {# <p>You have cancelled the payment at afterpay, click pay below to try again.</p> #}
             {# {% endif %} #}
+            {% if hasFlashError %}
+                {% set orderToken = craft.spicyAfterpay.getNewPaymentToken(cart, currentUrl)%}
+            {% endif %}
             <button id="spicy-afterpay" data-sw-afterpay-token="{{ orderToken }}"
                     data-sw-afterpay-cc="{{ gateway.region }}" disabled>Pay
             </button>
