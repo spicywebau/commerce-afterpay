@@ -2,7 +2,7 @@
 
 Afterpay gateway for craft commerce
 
-![Screenshot](resources/img/plugin-logo.png)
+![Screenshot](resources/img/logo.svg)
 
 ## Overview
 
