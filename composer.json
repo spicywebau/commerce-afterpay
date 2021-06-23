@@ -2,7 +2,7 @@
 	"name": "spicyweb/commerce-afterpay",
 	"description": "Afterpay gateway for craft commerce",
 	"type": "craft-plugin",
-	"version": "0.1.1",
+	"version": "1.0.0",
 	"keywords": [
 		"craft",
 		"cms",
