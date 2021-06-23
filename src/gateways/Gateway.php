@@ -56,6 +56,9 @@ class Gateway extends BaseGateway
      */
     public $region;
 
+    /**
+     * @var string
+     */
     public $regionDollar;
 
     /*
