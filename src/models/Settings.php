@@ -33,17 +33,17 @@ class Settings extends Model
 {
     // Public Properties
     // =========================================================================
-    
+
     /**
      * Some field model attribute
      *
      * @var string
      */
-    public $someAttribute = 'Some Default';
-    
+    public $confirmationUrl = '';
+
     // Public Methods
     // =========================================================================
-    
+
     /**
      * Returns the validation rules for attributes.
      *
@@ -57,8 +57,7 @@ class Settings extends Model
     public function rules()
     {
         return [
-            ['someAttribute', 'string'],
-            ['someAttribute', 'default', 'value' => 'Some Default'],
+            ['confirmationUrl', 'string']
         ];
     }
 }

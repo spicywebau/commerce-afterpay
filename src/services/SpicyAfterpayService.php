@@ -13,11 +13,8 @@ namespace spicyweb\spicyafterpay\services;
 use Craft;
 use craft\base\Component;
 use craft\commerce\elements\Order;
-// use craft\commerce\Plugin as Commerce;
 use craft\commerce\models\Address;
 use craft\commerce\models\LineItem;
-
-// use spicyweb\spicyafterpay\SpicyAfterpay;
 
 use Afterpay\SDK\HTTP\Request\Ping as AfterpayPingRequest;
 
@@ -39,6 +36,7 @@ use yii\base\InvalidConfigException;
 class SpicyAfterpayService extends Component
 {
     public $regionDollar;
+    
     // Public Methods
     // =========================================================================
 
