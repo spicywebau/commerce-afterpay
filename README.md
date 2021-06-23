@@ -43,7 +43,7 @@ Within the settings page, you'll be able to set:
 
 Both the ID and Key can be set as environment variables in your `.env` file.
 
-![settings page](doc/images/settings.png)
+<img src="doc/images/settings.png" width="300">
 
 ## Using the plugin
 
