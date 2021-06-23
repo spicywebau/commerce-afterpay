@@ -36,7 +36,7 @@ use yii\base\InvalidConfigException;
 class SpicyAfterpayService extends Component
 {
     public $regionDollar;
-    
+
     // Public Methods
     // =========================================================================
 

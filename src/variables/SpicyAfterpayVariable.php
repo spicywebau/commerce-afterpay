@@ -10,11 +10,16 @@
 
 namespace spicyweb\spicyafterpay\variables;
 
-use Afterpay\SDK\HTTP\Request\CreateCheckout as AfterpayCreateCheckoutRequest;
-use craft\commerce\elements\Order;
 use spicyweb\spicyafterpay\SpicyAfterpay;
 
+use Afterpay\SDK\Exception\InvalidArgumentException;
+use Afterpay\SDK\Exception\NetworkException;
+use Afterpay\SDK\Exception\ParsingException;
+use Afterpay\SDK\HTTP\Request\CreateCheckout as AfterpayCreateCheckoutRequest;
+
 use Craft;
+use craft\commerce\elements\Order;
+use yii\base\InvalidConfigException;
 use yii\helpers\Json;
 
 /**
@@ -56,6 +61,12 @@ class SpicyAfterpayVariable
         return SpicyAfterpay::$plugin->spicyAfterpayService->checkAfterpayStatus();
     }
 
+    /**
+     * @throws ParsingException
+     * @throws InvalidConfigException
+     * @throws InvalidArgumentException
+     * @throws NetworkException
+     */
     public function getNewPaymentToken(Order $order, $url = null)
     {
         $gateway = $order->getGateway();
