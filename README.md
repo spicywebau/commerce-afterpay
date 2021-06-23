@@ -28,7 +28,7 @@ Open your Craft project's control panel, navigate to the Plugin Store, search fo
 ### Composer
 Open your terminal, navigate to your Craft project's root directory and run the following command:
 ```
-composer require spicywebau/commerce-afterpay
+composer require spicyweb/commerce-afterpay
 ```
 Then open your project's control panel, navigate to Settings &rarr; Plugins, find Afterpay and click Install.
 
