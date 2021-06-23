@@ -1,4 +1,4 @@
-<img src="resources/img/logo.svg" width="100">
+<img src="src/resources/img/logo.svg" width="100">
 
 # Afterpay
 
