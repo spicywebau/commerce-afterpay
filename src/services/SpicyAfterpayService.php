@@ -21,14 +21,6 @@ use Afterpay\SDK\HTTP\Request\Ping as AfterpayPingRequest;
 use yii\base\InvalidConfigException;
 
 /**
- * SpicyAfterpayService Service
- *
- * All of your plugin’s business logic should go in services, including saving data,
- * retrieving data, etc. They provide APIs that your controllers, template variables,
- * and other plugins can interact with.
- *
- * https://craftcms.com/docs/plugins/services
- *
  * @author    Spicy Web
  * @package   SpicyAfterpay
  * @since     0.1.0
