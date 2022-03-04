@@ -11,7 +11,7 @@
 		"spicy afterpay"
 	],
 	"support": {
-		"docs": "https://github.com/spicywebau/commerce-afterpay/blob/master/README.md",
+		"docs": "https://github.com/spicywebau/commerce-afterpay/blob/main/README.md",
 		"issues": "https://github.com/spicywebau/commerce-afterpay/issues"
 	},
 	"license": "MIT",
@@ -38,8 +38,8 @@
 		"handle": "spicy-afterpay",
 		"developer": "Spicy Web",
 		"developerUrl": "https://github.com/spicywebau",
-		"documentationUrl": "https://github.com/spicywebau/commerce-afterpay/blob/master/README.md",
-		"changelogUrl": "https://github.com/spicywebau/commerce-afterpay/blob/master/CHANGELOG.md",
+		"documentationUrl": "https://github.com/spicywebau/commerce-afterpay/blob/main/README.md",
+		"changelogUrl": "https://github.com/spicywebau/commerce-afterpay/blob/main/CHANGELOG.md",
 		"components": {
 			"spicyAfterpayService": "spicyweb\\spicyafterpay\\services\\SpicyAfterpayService"
 		},
