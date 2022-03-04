@@ -15,8 +15,8 @@ Supports
 ## Requirements
 
 This plugin requires: 
-- Craft CMS 3.4.0 or later.
-- Craft Commerce 3.0.0 or later.
+- Craft CMS 3.6.0 or later.
+- Craft Commerce 3.3.0 or later.
 
 ## Documentation
 

@@ -22,8 +22,8 @@
 		}
 	],
 	"require": {
-		"craftcms/cms": "^3.4.0",
-		"craftcms/commerce": "^3.0.0",
+		"craftcms/cms": "^3.6.0",
+		"craftcms/commerce": "^3.3.0",
 		"craftcms/commerce-omnipay": "^3.0.0",
 		"omnipay/common": "^3.0.3",
 		"afterpay-global/afterpay-sdk-php": "^1.1"
