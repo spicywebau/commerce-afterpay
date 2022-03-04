@@ -1,6 +1,6 @@
 {
 	"name": "spicyweb/commerce-afterpay",
-	"description": "Afterpay gateway for craft commerce",
+	"description": "Afterpay gateway for Craft Commerce",
 	"type": "craft-plugin",
 	"version": "1.0.0",
 	"keywords": [
@@ -8,7 +8,7 @@
 		"cms",
 		"craftcms",
 		"craft-plugin",
-		"spicy afterpay"
+		"afterpay"
 	],
 	"support": {
 		"docs": "https://github.com/spicywebau/commerce-afterpay/blob/main/README.md",
