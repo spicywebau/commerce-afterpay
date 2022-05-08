@@ -69,7 +69,7 @@ class Gateway extends BaseGateway
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -96,7 +96,7 @@ class Gateway extends BaseGateway
         return 'Afterpay';
     }
 
-    public function getSettingsHtml()
+    public function getSettingsHtml(): ?string
     {
         return Craft::$app->getView()->renderTemplate(
             'spicy-afterpay/settings',
@@ -107,7 +107,7 @@ class Gateway extends BaseGateway
     /**
      * @inheritDoc
      */
-    public function getPaymentFormHtml(array $params)
+    public function getPaymentFormHtml(array $params): ?string
     {
         $url = $this->sandboxMode ? 'https://portal.sandbox.afterpay.com/afterpay.js' : 'https://portal.afterpay.com/afterpay.js';
         $paymentFormModel = $this->getPaymentFormModel();
@@ -218,7 +218,7 @@ class Gateway extends BaseGateway
     /**
      * @inheritDoc
      */
-    public function deletePaymentSource($token): bool
+    public function deletePaymentSource(string $token): bool
     {
     }
 

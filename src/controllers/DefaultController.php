@@ -27,7 +27,7 @@ class DefaultController extends Controller
 
     // Protected Properties
     // =========================================================================
-    protected $allowAnonymous = ['get-token'];
+    protected array|int|bool $allowAnonymous = ['get-token'];
 
     // Public Methods
     // =========================================================================
