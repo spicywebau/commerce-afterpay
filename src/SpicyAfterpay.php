@@ -12,16 +12,16 @@ namespace spicyweb\spicyafterpay;
 
 use Craft;
 use craft\base\Plugin;
-use craft\web\twig\variables\CraftVariable;
 use craft\commerce\services\Gateways;
 use craft\events\RegisterComponentTypesEvent;
+use craft\web\twig\variables\CraftVariable;
 
-use spicyweb\spicyafterpay\services\SpicyAfterpayService as SpicyAfterpayServiceService;
-use spicyweb\spicyafterpay\variables\SpicyAfterpayVariable;
+use spicyweb\spicyafterpay\gateways\Gateway;
+use spicyweb\spicyafterpay\models\Settings;
 
 //use spicyweb\spicyafterpay\twigextensions\SpicyAfterpayTwigExtension;
-use spicyweb\spicyafterpay\models\Settings;
-use spicyweb\spicyafterpay\gateways\Gateway;
+use spicyweb\spicyafterpay\services\SpicyAfterpayService as SpicyAfterpayServiceService;
+use spicyweb\spicyafterpay\variables\SpicyAfterpayVariable;
 
 use yii\base\Event;
 
@@ -94,7 +94,7 @@ class SpicyAfterpay extends Plugin
         Event::on(
             CraftVariable::class,
             CraftVariable::EVENT_INIT,
-            function (Event $event) {
+            function(Event $event) {
                 /** @var CraftVariable $variable */
                 $variable = $event->sender;
                 $variable->set('spicyAfterpay', SpicyAfterpayVariable::class);
@@ -113,7 +113,7 @@ class SpicyAfterpay extends Plugin
         Event::on(
             Gateways::class,
             Gateways::EVENT_REGISTER_GATEWAY_TYPES,
-            function (RegisterComponentTypesEvent $event) {
+            function(RegisterComponentTypesEvent $event) {
                 $event->types[] = Gateway::class;
             }
         );

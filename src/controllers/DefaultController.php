@@ -10,12 +10,9 @@
 
 namespace spicyweb\spicyafterpay\controllers;
 
+use craft\web\Controller;
 
 use spicyweb\spicyafterpay\SpicyAfterpay;
-
-use Craft;
-use craft\web\Controller;
-use yii\db\Exception;
 
 /**
  * @author    Spicy Web
@@ -24,7 +21,6 @@ use yii\db\Exception;
  */
 class DefaultController extends Controller
 {
-
     // Protected Properties
     // =========================================================================
     protected array|int|bool $allowAnonymous = ['get-token'];

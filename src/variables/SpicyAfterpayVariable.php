@@ -10,15 +10,15 @@
 
 namespace spicyweb\spicyafterpay\variables;
 
-use spicyweb\spicyafterpay\SpicyAfterpay;
-
 use Afterpay\SDK\Exception\InvalidArgumentException;
+
 use Afterpay\SDK\Exception\NetworkException;
 use Afterpay\SDK\Exception\ParsingException;
 use Afterpay\SDK\HTTP\Request\CreateCheckout as AfterpayCreateCheckoutRequest;
-
 use Craft;
+
 use craft\commerce\elements\Order;
+use spicyweb\spicyafterpay\SpicyAfterpay;
 use yii\base\InvalidConfigException;
 use yii\helpers\Json;
 

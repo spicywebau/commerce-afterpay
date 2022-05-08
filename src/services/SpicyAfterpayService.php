@@ -10,13 +10,13 @@
 
 namespace spicyweb\spicyafterpay\services;
 
+use Afterpay\SDK\HTTP\Request\Ping as AfterpayPingRequest;
 use Craft;
 use craft\base\Component;
 use craft\commerce\elements\Order;
 use craft\commerce\models\Address;
-use craft\commerce\models\LineItem;
 
-use Afterpay\SDK\HTTP\Request\Ping as AfterpayPingRequest;
+use craft\commerce\models\LineItem;
 
 use yii\base\InvalidConfigException;
 
@@ -98,7 +98,7 @@ class SpicyAfterpayService extends Component
         if ($shippingCost > 0) {
             $checkoutData['shippingAmount'] = [
                 'amount' => $shippingCost,
-                'currency' => $this->regionDollar
+                'currency' => $this->regionDollar,
             ];
         }
 
@@ -107,8 +107,8 @@ class SpicyAfterpayService extends Component
                 'displayName' => 'Total Discount Amount',
                 'amount' => [
                     'amount' => $shippingCost,
-                    'currency' => $this->regionDollar
-                ]
+                    'currency' => $this->regionDollar,
+                ],
             ];
         }
 
@@ -127,7 +127,7 @@ class SpicyAfterpayService extends Component
     {
         return [
             'amount' => $order->getTotal(),
-            'currency' => $this->regionDollar
+            'currency' => $this->regionDollar,
         ];
     }
 
@@ -153,7 +153,7 @@ class SpicyAfterpayService extends Component
             'region' => $address->getStateText() ?? '',
             'postcode' => $address->zipCode ?? '',
             'countryCode' => $address->countryIso,
-            'phoneNumber' => $address->phone ?? ''
+            'phoneNumber' => $address->phone ?? '',
         ];
     }
 
@@ -173,8 +173,8 @@ class SpicyAfterpayService extends Component
                 'quantity' => $item->qty,
                 'price' => [
                     $item->getTotal(),
-                    $this->regionDollar
-                ]
+                    $this->regionDollar,
+                ],
             ];
         }
 

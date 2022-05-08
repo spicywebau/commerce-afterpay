@@ -2,34 +2,34 @@
 
 namespace spicyweb\spicyafterpay\gateways;
 
+use Afterpay\SDK\Helper\StringHelper as AfterpayStringHelper;
+use Afterpay\SDK\HTTP\Request\CreateRefund as AfterpayCreateRefundRequest;
+use Afterpay\SDK\HTTP\Request\DeferredPaymentAuth as AfterpayDeferredPaymentAuthRequest;
+use Afterpay\SDK\HTTP\Request\DeferredPaymentCapture as AfterpayDeferredPaymentCaptureRequest;
+use Afterpay\SDK\HTTP\Request\ImmediatePaymentCapture as AfterpayImmediatePaymentCaptureRequest;
+use Afterpay\SDK\MerchantAccount as AfterpayMerchantAccount;
 use Craft;
-use craft\commerce\errors\PaymentException;
-use craft\commerce\Plugin as CommercePlugin;
 use craft\commerce\base\Gateway as BaseGateway;
+
 use craft\commerce\base\RequestResponseInterface;
+use craft\commerce\errors\PaymentException;
 use craft\commerce\models\payments\BasePaymentForm;
+use craft\commerce\models\payments\OffsitePaymentForm;
+
 use craft\commerce\models\PaymentSource;
 use craft\commerce\models\Transaction;
-
+use craft\commerce\Plugin as CommercePlugin;
 use craft\helpers\Json;
+
 use craft\helpers\Template;
 use craft\web\Response as WebResponse;
-use craft\web\View;
-
-use Afterpay\SDK\MerchantAccount as AfterpayMerchantAccount;
-use Afterpay\SDK\HTTP\Request\ImmediatePaymentCapture as AfterpayImmediatePaymentCaptureRequest;
-use Afterpay\SDK\HTTP\Request\DeferredPaymentAuth as AfterpayDeferredPaymentAuthRequest;
-use Afterpay\SDK\Helper\StringHelper as AfterpayStringHelper;
-
-use Afterpay\SDK\HTTP\Request\DeferredPaymentCapture as AfterpayDeferredPaymentCaptureRequest;
-use Afterpay\SDK\HTTP\Request\CreateRefund as AfterpayCreateRefundRequest;
 
 // use spicyweb\spicyafterpay\SpicyAfterpay;
-use spicyweb\spicyafterpay\SpicyAfterpayAssetBundle;
+use craft\web\View;
 use spicyweb\spicyafterpay\gateways\responses\CheckoutResponse as SAPCheckoutResponse;
 use spicyweb\spicyafterpay\gateways\responses\RefundResponse as SAPRefundResponse;
 
-use craft\commerce\models\payments\OffsitePaymentForm;
+use spicyweb\spicyafterpay\SpicyAfterpayAssetBundle;
 
 class Gateway extends BaseGateway
 {
@@ -115,7 +115,7 @@ class Gateway extends BaseGateway
             'gateway' => $this,
             'currency' => CommercePlugin::getInstance()->getPaymentCurrencies(
             )->getPrimaryPaymentCurrencyIso(),
-            'paymentForm' => $paymentFormModel
+            'paymentForm' => $paymentFormModel,
         ];
 
         $params = array_merge($defaults, $params);
@@ -140,7 +140,7 @@ class Gateway extends BaseGateway
      */
     public function authorize(
         Transaction $transaction,
-        BasePaymentForm $form
+        BasePaymentForm $form,
     ): RequestResponseInterface {
         return $this->checkout($transaction, 'authorize');
     }
@@ -168,8 +168,8 @@ class Gateway extends BaseGateway
                 'requestId' => AfterpayStringHelper::generateUuid(),
                 'amount' => [
                     $response['openToCaptureAmount']['amount'],
-                    $response['openToCaptureAmount']['currency']
-                ]
+                    $response['openToCaptureAmount']['currency'],
+                ],
             ]
         );
 
@@ -188,7 +188,7 @@ class Gateway extends BaseGateway
         } catch (\Exception $e) {
             return $this->getResponseModel(
                 [
-                    'message' => $e
+                    'message' => $e,
                 ]
             );
         }
@@ -236,7 +236,7 @@ class Gateway extends BaseGateway
      */
     public function purchase(
         Transaction $transaction,
-        BasePaymentForm $form
+        BasePaymentForm $form,
     ): RequestResponseInterface {
         return $this->checkout($transaction, 'purchase');
     }
@@ -255,8 +255,8 @@ class Gateway extends BaseGateway
             [
                 'amount' => [
                     'amount' => $transaction->paymentAmount,
-                    'currency' => $this->regionDollar
-                ]
+                    'currency' => $this->regionDollar,
+                ],
             ]
         );
 
@@ -275,7 +275,7 @@ class Gateway extends BaseGateway
         } catch (\Exception $e) {
             return $this->getRefundResponseModel(
                 [
-                    'message' => $e
+                    'message' => $e,
                 ]
             );
         }
@@ -448,7 +448,7 @@ class Gateway extends BaseGateway
 
                 return $this->getResponseModel(
                     [
-                        'message' => 'Payment Unsuccessful. Please try again (and make sure all the details is correct).'
+                        'message' => 'Payment Unsuccessful. Please try again (and make sure all the details is correct).',
                     ]
                 );
             }
@@ -459,7 +459,7 @@ class Gateway extends BaseGateway
 
             return $this->getResponseModel(
                 [
-                    'message' => $e
+                    'message' => $e,
                 ]
             );
         }

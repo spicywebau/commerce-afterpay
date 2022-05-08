@@ -108,4 +108,3 @@ class RefundResponse implements RequestResponseInterface
     {
     }
 }
-

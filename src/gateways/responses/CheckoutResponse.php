@@ -16,7 +16,8 @@ class CheckoutResponse implements RequestResponseInterface
      *
      * @param $data
      */
-    public function __construct($data) {
+    public function __construct($data)
+    {
         $this->data = $data;
     }
 
@@ -114,4 +115,3 @@ class CheckoutResponse implements RequestResponseInterface
         // TODO: Implement redirect() method.
     }
 }
-

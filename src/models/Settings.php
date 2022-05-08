@@ -10,10 +10,10 @@
 
 namespace spicyweb\spicyafterpay\models;
 
-use spicyweb\spicyafterpay\SpicyAfterpay;
-
 use Craft;
+
 use craft\base\Model;
+use spicyweb\spicyafterpay\SpicyAfterpay;
 
 /**
  * SpicyAfterpay Settings Model
@@ -57,7 +57,7 @@ class Settings extends Model
     public function rules(): array
     {
         return [
-            ['confirmationUrl', 'string']
+            ['confirmationUrl', 'string'],
         ];
     }
 }
