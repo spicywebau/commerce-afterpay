@@ -6,9 +6,10 @@ Afterpay plugin for Craft Commerce 3.x
 
 ## Overview
 
-A Craft CMS plugin adds Afterpay as a gateway for Craft Commerce.
+A Craft CMS plugin that adds Afterpay as a gateway for Craft Commerce.
 
-Supports
+Supports:
+
 - Purchase or Manual payment type.
 - Refunds, full and partial.
 
