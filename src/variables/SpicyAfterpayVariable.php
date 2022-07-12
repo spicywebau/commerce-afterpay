@@ -23,14 +23,9 @@ use yii\helpers\Json;
 /**
  * Spicy Afterpay Variable
  *
- * Craft allows plugins to provide their own template variables, accessible from
- * the {{ craft }} global variable (e.g. {{ craft.spicyAfterpay }}).
- *
- * https://craftcms.com/docs/plugins/variables
- *
- * @author    Spicy Web
- * @package   SpicyAfterpay
- * @since     0.1.0
+ * @package spicyweb\spicyafterpay\variables
+ * @author Spicy Web <plugins@spicyweb.com.au>
+ * @since 1.0.0
  */
 class SpicyAfterpayVariable
 {

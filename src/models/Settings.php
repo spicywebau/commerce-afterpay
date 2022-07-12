@@ -17,16 +17,9 @@ use spicyweb\spicyafterpay\SpicyAfterpay;
 /**
  * SpicyAfterpay Settings Model
  *
- * This is a model used to define the plugin's settings.
- *
- * Models are containers for data. Just about every time information is passed
- * between services, controllers, and templates in Craft, it’s passed via a model.
- *
- * https://craftcms.com/docs/plugins/models
- *
- * @author    Spicy Web
- * @package   SpicyAfterpay
- * @since     0.1.0
+ * @package spicyweb\spicyafterpay\models
+ * @author Spicy Web <plugins@spicyweb.com.au>
+ * @since 1.0.0
  */
 class Settings extends Model
 {

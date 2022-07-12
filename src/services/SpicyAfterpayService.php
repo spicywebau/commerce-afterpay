@@ -19,9 +19,11 @@ use craft\commerce\models\LineItem;
 use yii\base\InvalidConfigException;
 
 /**
- * @author    Spicy Web
- * @package   SpicyAfterpay
- * @since     0.1.0
+ * Class SpicyAfterpayService
+ *
+ * @package spicyweb\spicyafterpay\services
+ * @author Spicy Web <plugins@spicyweb.com.au>
+ * @since 1.0.0
  */
 class SpicyAfterpayService extends Component
 {

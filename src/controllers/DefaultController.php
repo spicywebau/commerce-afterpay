@@ -14,9 +14,11 @@ use craft\web\Controller;
 use spicyweb\spicyafterpay\SpicyAfterpay;
 
 /**
- * @author    Spicy Web
- * @package   SpicyAfterpay
- * @since     0.1.0
+ * Class DefaultController
+ *
+ * @package spicyweb\spicyafterpay\controllers
+ * @author Spicy Web <plugins@spicyweb.com.au>
+ * @since 1.0.0
  */
 class DefaultController extends Controller
 {

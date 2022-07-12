@@ -25,6 +25,13 @@ use spicyweb\spicyafterpay\gateways\responses\CheckoutResponse as SAPCheckoutRes
 use spicyweb\spicyafterpay\gateways\responses\RefundResponse as SAPRefundResponse;
 use spicyweb\spicyafterpay\SpicyAfterpayAssetBundle;
 
+/**
+ * Class Gateway
+ *
+ * @package spicyweb\spicyafterpay\gateways
+ * @author Spicy Web <plugins@spicyweb.com.au>
+ * @since 1.0.0
+ */
 class Gateway extends BaseGateway
 {
     // Public Properties

@@ -4,6 +4,13 @@ namespace spicyweb\spicyafterpay\gateways\responses;
 
 use craft\commerce\base\RequestResponseInterface;
 
+/**
+ * Class RefundResponse
+ *
+ * @package spicyweb\spicyafterpay\gateways\responses
+ * @author Spicy Web <plugins@spicyweb.com.au>
+ * @since 1.0.0
+ */
 class RefundResponse implements RequestResponseInterface
 {
     protected $data;

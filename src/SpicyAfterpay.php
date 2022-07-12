@@ -1,8 +1,6 @@
 <?php
 /**
- * Afterpay plugin for Craft CMS ^3.4.0
- *
- * Afterpay gateway for Craft Commerce
+ * Afterpay plugin for Craft CMS 4 / Craft Commerce 4
  *
  * @link      https://github.com/spicywebau
  * @copyright Copyright (c) 2021 Spicy Web
@@ -22,9 +20,11 @@ use spicyweb\spicyafterpay\variables\SpicyAfterpayVariable;
 use yii\base\Event;
 
 /**
- * @author    Spicy Web
- * @package   SpicyAfterpay
- * @since     0.1.0
+ * Class SpicyAfterpay
+ *
+ * @package spicyweb\spicyafterpay
+ * @author Spicy Web <plugins@spicyweb.com.au>
+ * @since 1.0.0
  *
  * @property  SpicyAfterpayServiceService $spicyAfterpayService
  * @property  Settings $settings
