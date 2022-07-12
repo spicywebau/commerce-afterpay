@@ -53,20 +53,6 @@ class SpicyAfterpay extends Plugin
      */
     public string $schemaVersion = '0.1.0';
 
-    /**
-     * Set to `true` if the plugin should have a settings view in the control panel.
-     *
-     * @var bool
-     */
-    public bool $hasCpSettings = false;
-
-    /**
-     * Set to `true` if the plugin should have its own section (main nav item) in the control panel.
-     *
-     * @var bool
-     */
-    public bool $hasCpSection = false;
-
     // Public Methods
     // =========================================================================
 
