@@ -1,8 +1,6 @@
 <?php
 /**
- * Spicy Afterpay plugin for Craft CMS 3.x
- *
- * Afterpay gateway for craft commerce
+ * Afterpay plugin for Craft CMS 4 / Craft Commerce 4
  *
  * @link      https://github.com/spicywebau
  * @copyright Copyright (c) 2020 Spicy Web
@@ -32,8 +30,10 @@ class SpicyAfterpayService extends Component
     // Public Methods
     // =========================================================================
 
-    /*
-     * check if the Afterpay API status and see if it's available.
+    /**
+     * Checks the Afterpay API status to see if it's available.
+     *
+     * @return bool
      */
     public function checkAfterpayStatus(): bool
     {
@@ -76,6 +76,11 @@ class SpicyAfterpayService extends Component
     }
 
     /**
+     * Builds a checkout request for an order.
+     *
+     * @param Order $order
+     * @param string|null $redirectUrl
+     * @return array containing checkout data
      * @throws InvalidConfigException
      */
     public function buildCheckoutRequest(Order $order, $redirectUrl = null): array

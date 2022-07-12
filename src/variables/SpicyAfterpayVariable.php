@@ -1,8 +1,6 @@
 <?php
 /**
- * Spicy Afterpay plugin for Craft CMS 3.x
- *
- * Afterpay gateway for craft commerce
+ * Afterpay plugin for Craft CMS 4 / Craft Commerce 4
  *
  * @link      https://github.com/spicywebau
  * @copyright Copyright (c) 2020 Spicy Web
@@ -33,21 +31,9 @@ class SpicyAfterpayVariable
     // =========================================================================
 
     /**
-     * Whatever you want to output to a Twig template can go into a Variable method.
-     * You can have as many variable functions as you want.  From any Twig template,
-     * call it like this:
+     * Checks the Afterpay API status to see if it's available.
      *
-     *     {{ craft.spicyAfterpay.exampleVariable }}
-     *
-     * Or, if your variable requires parameters from Twig:
-     *
-     *     {{ craft.spicyAfterpay.exampleVariable(twigValue) }}
-     */
-
-    /*
-     * return the afterpay api status.
-     * true = online
-     * false = offline
+     * @return bool
      */
     public function afterpayStatus(): bool
     {

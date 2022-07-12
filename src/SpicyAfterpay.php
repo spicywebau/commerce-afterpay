@@ -36,10 +36,7 @@ class SpicyAfterpay extends Plugin
     // =========================================================================
 
     /**
-     * Static property that is an instance of this plugin class so that it can be accessed via
-     * SpicyAfterpay::$plugin
-     *
-     * @var SpicyAfterpay
+     * @var SpicyAfterpay The instance of this plugin
      */
     public static $plugin;
 
@@ -47,9 +44,7 @@ class SpicyAfterpay extends Plugin
     // =========================================================================
 
     /**
-     * To execute your plugin’s migrations, you’ll need to increase its schema version.
-     *
-     * @var string
+     * @inheritdoc
      */
     public string $schemaVersion = '0.1.0';
 
@@ -57,15 +52,7 @@ class SpicyAfterpay extends Plugin
     // =========================================================================
 
     /**
-     * Set our $plugin static property to this class so that it can be accessed via
-     * SpicyAfterpay::$plugin
-     *
-     * Called after the plugin class is instantiated; do any one-time initialization
-     * here such as hooks and events.
-     *
-     * If you have a '/vendor/autoload.php' file, it will be loaded for you automatically;
-     * you do not need to load it in your init() method.
-     *
+     * @inheritdoc
      */
     public function init()
     {
