@@ -11,7 +11,6 @@
 namespace spicyweb\spicyafterpay\models;
 
 use Craft;
-
 use craft\base\Model;
 use spicyweb\spicyafterpay\SpicyAfterpay;
 

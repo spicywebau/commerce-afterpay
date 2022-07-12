@@ -15,14 +15,10 @@ use craft\base\Plugin;
 use craft\commerce\services\Gateways;
 use craft\events\RegisterComponentTypesEvent;
 use craft\web\twig\variables\CraftVariable;
-
 use spicyweb\spicyafterpay\gateways\Gateway;
 use spicyweb\spicyafterpay\models\Settings;
-
-//use spicyweb\spicyafterpay\twigextensions\SpicyAfterpayTwigExtension;
 use spicyweb\spicyafterpay\services\SpicyAfterpayService as SpicyAfterpayServiceService;
 use spicyweb\spicyafterpay\variables\SpicyAfterpayVariable;
-
 use yii\base\Event;
 
 /**

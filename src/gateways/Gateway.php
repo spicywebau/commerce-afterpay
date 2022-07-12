@@ -10,25 +10,19 @@ use Afterpay\SDK\HTTP\Request\ImmediatePaymentCapture as AfterpayImmediatePaymen
 use Afterpay\SDK\MerchantAccount as AfterpayMerchantAccount;
 use Craft;
 use craft\commerce\base\Gateway as BaseGateway;
-
 use craft\commerce\base\RequestResponseInterface;
 use craft\commerce\errors\PaymentException;
 use craft\commerce\models\payments\BasePaymentForm;
 use craft\commerce\models\payments\OffsitePaymentForm;
-
 use craft\commerce\models\PaymentSource;
 use craft\commerce\models\Transaction;
 use craft\commerce\Plugin as CommercePlugin;
 use craft\helpers\Json;
-
 use craft\helpers\Template;
 use craft\web\Response as WebResponse;
-
-// use spicyweb\spicyafterpay\SpicyAfterpay;
 use craft\web\View;
 use spicyweb\spicyafterpay\gateways\responses\CheckoutResponse as SAPCheckoutResponse;
 use spicyweb\spicyafterpay\gateways\responses\RefundResponse as SAPRefundResponse;
-
 use spicyweb\spicyafterpay\SpicyAfterpayAssetBundle;
 
 class Gateway extends BaseGateway

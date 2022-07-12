@@ -11,7 +11,6 @@
 namespace spicyweb\spicyafterpay\controllers;
 
 use craft\web\Controller;
-
 use spicyweb\spicyafterpay\SpicyAfterpay;
 
 /**
