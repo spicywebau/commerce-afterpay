@@ -40,32 +40,32 @@ class Gateway extends BaseGateway
     /**
      * @var string
      */
-    public $merchantId;
+    public string $merchantId;
 
     /**
      * @var string
      */
-    public $merchantKey;
+    public string $merchantKey;
 
     /**
      * @var bool
      */
-    public $sandboxMode;
+    public bool $sandboxMode;
 
     /**
      * @var string
      */
-    public $region;
+    public string $region;
 
     /**
      * @var string
      */
-    public $regionDollar;
+    public string $regionDollar;
 
     /*
      * Private Properties
      */
-    private $_merchant;
+    private ?AfterpayMerchantAccount $_merchant;
 
     // Public Methods
     // =========================================================================
@@ -371,7 +371,7 @@ class Gateway extends BaseGateway
         return new SAPRefundResponse($data);
     }
 
-    public function getMerchant()
+    public function getMerchant(): ?AfterpayMerchantAccount
     {
         return $this->_merchant;
     }

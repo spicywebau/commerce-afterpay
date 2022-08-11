@@ -41,12 +41,15 @@ class SpicyAfterpayVariable
     }
 
     /**
+     * @param Order $order
+     * @param string|null $url
+     * @return mixed
      * @throws ParsingException
      * @throws InvalidConfigException
      * @throws InvalidArgumentException
      * @throws NetworkException
      */
-    public function getNewPaymentToken(Order $order, $url = null)
+    public function getNewPaymentToken(Order $order, ?string $url = null): mixed
     {
         $gateway = $order->getGateway();
 

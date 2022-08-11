@@ -27,7 +27,7 @@ class Settings extends Model
     /**
      * @var string A confirmation URL.
      */
-    public $confirmationUrl = '';
+    public string $confirmationUrl = '';
 
     // Public Methods
     // =========================================================================

@@ -36,9 +36,9 @@ class SpicyAfterpay extends Plugin
     // =========================================================================
 
     /**
-     * @var SpicyAfterpay The instance of this plugin
+     * @var SpicyAfterpay|null The instance of this plugin
      */
-    public static $plugin;
+    public static ?SpicyAfterpay $plugin;
 
     // Public Properties
     // =========================================================================
@@ -54,7 +54,7 @@ class SpicyAfterpay extends Plugin
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         self::$plugin = $this;

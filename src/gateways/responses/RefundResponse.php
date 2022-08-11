@@ -13,7 +13,7 @@ use craft\commerce\base\RequestResponseInterface;
  */
 class RefundResponse implements RequestResponseInterface
 {
-    protected $data;
+    protected ?array $data;
 
     // Public Methods
     // =========================================================================
@@ -21,9 +21,9 @@ class RefundResponse implements RequestResponseInterface
     /**
      * Construct the response
      *
-     * @param $data
+     * @param array $data
      */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
@@ -95,7 +95,7 @@ class RefundResponse implements RequestResponseInterface
     /**
      * @inheritDoc
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
@@ -111,7 +111,7 @@ class RefundResponse implements RequestResponseInterface
     /**
      * @inheritDoc
      */
-    public function redirect()
+    public function redirect(): void
     {
     }
 }

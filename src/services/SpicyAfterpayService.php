@@ -25,7 +25,10 @@ use yii\base\InvalidConfigException;
  */
 class SpicyAfterpayService extends Component
 {
-    public $regionDollar;
+    /**
+     * @var string
+     */
+    public string $regionDollar;
 
     // Public Methods
     // =========================================================================
@@ -83,7 +86,7 @@ class SpicyAfterpayService extends Component
      * @return array containing checkout data
      * @throws InvalidConfigException
      */
-    public function buildCheckoutRequest(Order $order, $redirectUrl = null): array
+    public function buildCheckoutRequest(Order $order, ?string $redirectUrl = null): array
     {
         $this->regionDollar = $order->getGateway()->regionDollar;
 

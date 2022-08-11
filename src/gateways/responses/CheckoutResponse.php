@@ -13,7 +13,7 @@ use craft\commerce\base\RequestResponseInterface;
  */
 class CheckoutResponse implements RequestResponseInterface
 {
-    protected $data;
+    protected ?array $data;
 
     // Public Methods
     // =========================================================================
@@ -21,9 +21,9 @@ class CheckoutResponse implements RequestResponseInterface
     /**
      * Construct the response
      *
-     * @param $data
+     * @param array $data
      */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
@@ -101,7 +101,7 @@ class CheckoutResponse implements RequestResponseInterface
     /**
      * @inheritDoc
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
@@ -117,7 +117,7 @@ class CheckoutResponse implements RequestResponseInterface
     /**
      * @inheritDoc
      */
-    public function redirect()
+    public function redirect(): void
     {
         // TODO: Implement redirect() method.
     }
