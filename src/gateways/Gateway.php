@@ -75,18 +75,11 @@ class Gateway extends BaseGateway
         parent::init();
 
         $this->_merchant = $this->setMerchant();
-
-        switch ($this->region) {
-            case 'AU':
-                $this->regionDollar = 'AUD';
-                break;
-            case 'NZ':
-                $this->regionDollar = 'NZD';
-                break;
-            case 'US':
-                $this->regionDollar = 'USD';
-                break;
-        }
+        $this->regionDollar = match ($this->region) {
+            'AU' => 'AUD',
+            'NZ' => 'NZD',
+            'US' => 'USD',
+        };
     }
 
     /**
