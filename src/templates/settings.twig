@@ -16,38 +16,38 @@
 {% from "_includes/forms" import textField, lightswitchField, selectField, autosuggestField %}
 
 {{ autosuggestField({
-	label: 'Merchant ID',
-	id: 'merchantId',
-	class: 'ltr',
-	name: 'merchantId',
-	suggestEnvVars: true,
-	value: gateway.merchantId,
-	required: true
+    label: 'Merchant ID',
+    id: 'merchantId',
+    class: 'ltr',
+    name: 'merchantId',
+    suggestEnvVars: true,
+    value: gateway.merchantId,
+    required: true
 }) }}
 
 {{ autosuggestField({
-	label: 'Merchant Key',
-	id: 'merchantKey',
-	class: 'ltr',
-	name: 'merchantKey',
-	suggestEnvVars: true,
-	value: gateway.merchantKey,
-	required: true
+    label: 'Merchant Key',
+    id: 'merchantKey',
+    class: 'ltr',
+    name: 'merchantKey',
+    suggestEnvVars: true,
+    value: gateway.merchantKey,
+    required: true
 }) }}
 
 {{ textField({
-	label: 'Country Code',
-	id: 'merchantCC',
-	class: 'ltr',
-	name: 'region',
-	maxlength: 2,
-	placeholder: 'ISO 3166-1 alpha-2 two character country code of the Merchant Account.',
-	value: gateway.region,
-	required: true
+    label: 'Country Code',
+    id: 'merchantCC',
+    class: 'ltr',
+    name: 'region',
+    maxlength: 2,
+    placeholder: 'ISO 3166-1 alpha-2 two character country code of the Merchant Account.',
+    value: gateway.region,
+    required: true
 }) }}
 
 {{ lightswitchField({
-	label: 'Sandbox Mode?',
-	name: 'sandboxMode',
-	on: gateway.sandboxMode,
+    label: 'Sandbox Mode?',
+    name: 'sandboxMode',
+    on: gateway.sandboxMode,
 }) }}
