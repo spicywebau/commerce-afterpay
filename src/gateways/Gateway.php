@@ -79,6 +79,7 @@ class Gateway extends BaseGateway
             'AU' => 'AUD',
             'NZ' => 'NZD',
             'US' => 'USD',
+            default => 'AUD',
         };
     }
 
@@ -96,6 +97,17 @@ class Gateway extends BaseGateway
             'spicy-afterpay/settings',
             ['gateway' => $this]
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function defineRules(): array
+    {
+        $rules = parent::defineRules();
+        $rules[] = [['merchantId', 'merchantKey', 'region'], 'required'];
+
+        return $rules;
     }
 
     /**

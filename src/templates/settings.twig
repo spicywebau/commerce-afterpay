@@ -22,6 +22,7 @@
     name: 'merchantId',
     suggestEnvVars: true,
     value: gateway.merchantId,
+    errors: gateway.getErrors('merchantId'),
     required: true
 }) }}
 
@@ -32,6 +33,7 @@
     name: 'merchantKey',
     suggestEnvVars: true,
     value: gateway.merchantKey,
+    errors: gateway.getErrors('merchantKey'),
     required: true
 }) }}
 
@@ -43,6 +45,7 @@
     maxlength: 2,
     placeholder: 'ISO 3166-1 alpha-2 two character country code of the Merchant Account.',
     value: gateway.region,
+    errors: gateway.getErrors('region'),
     required: true
 }) }}
 
