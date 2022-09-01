@@ -38,29 +38,29 @@ class Gateway extends BaseGateway
     // =========================================================================
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $merchantId;
+    public ?string $merchantId = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $merchantKey;
+    public ?string $merchantKey = null;
 
     /**
      * @var bool
      */
-    public bool $sandboxMode;
+    public bool $sandboxMode = false;
 
     /**
      * @var string
      */
-    public string $region;
+    public string $region = 'AU';
 
     /**
      * @var string
      */
-    public string $regionDollar;
+    public string $regionDollar = 'AUD';
 
     /*
      * Private Properties
